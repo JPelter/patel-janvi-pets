@@ -9,7 +9,7 @@ trigger:
     - react-frontend
 
 schedules:
-- cron: 0 0 * * * # MIDNIGHT UTC BUILD!
+- cron: 0 0 * * 0 # SUNDAY MIDNIGHT UTC BUILD!
   branches:
     include:
     - main
@@ -27,7 +27,7 @@ jobs:
       command: buildAndPush
       repository: jakepelter/patel-pets-website
       dockerfile: react-frontend/Dockerfile
-      containerRegistry: containerRegistry: 'jakep-dockerhub'
+      containerRegistry: 'jakep-dockerhub'
       tags: $(Build.BuildId)
   - task: PublishBuildArtifacts@1
     inputs:
