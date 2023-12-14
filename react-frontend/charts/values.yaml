@@ -3,4 +3,5 @@ imageTag:
 
 port: 80
 rpm: 5
+# NEED TO ADD IMAGETAG AND HOSTNAME AS HELM VALUES IN DEPLOYMENT!
 hostname:
