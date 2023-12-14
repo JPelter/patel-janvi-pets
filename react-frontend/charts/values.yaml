@@ -1,6 +1,7 @@
 # NEED TO ADD IMAGETAG AND HOSTNAME AS VALUES IN HELM DEPLOYMENT!
 image: docker.io/jakepelter/patel-pets-website
 imageTag:
+imagePullSecret: jakep-dockerhub
 
 port: 80
 rpm: 5

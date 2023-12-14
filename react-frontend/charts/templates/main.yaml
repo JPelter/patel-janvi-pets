@@ -13,7 +13,7 @@ spec:
         app: {{ .Release.Name }}
     spec:
       imagePullSecrets:
-      - name: jakep-dockerhub
+      - name: {{ .Values.imagePullSecret }}
       containers:
       - name: {{ .Release.Name }}
         image: {{ .Values.image }}:{{ .Values.imageTag }}
