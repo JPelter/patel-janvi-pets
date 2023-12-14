@@ -9,7 +9,7 @@ on:
 
 jobs:
   build-release:
-    environment:
+    environment: # Use the environment 'prod' for the main branch, 'dev' for feature/* branches!
       name: ${{ github.ref == 'refs/heads/main' && 'prod' || 'dev' }}
     runs-on: ubuntu-latest
     steps:
@@ -33,7 +33,7 @@ jobs:
     - name: Install Helm
       uses: azure/setup-helm@v3
       with:
-        version: 'v3.5.0' # default is latest (stable)
+        version: 'v3.5.0'
 
     - name: Create Kubeconfig file
       run: |
