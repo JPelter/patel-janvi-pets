@@ -1,7 +1,7 @@
+# NEED TO ADD IMAGETAG AND HOSTNAME AS VALUES IN HELM DEPLOYMENT!
 image: docker.io/jakepelter/patel-pets-website
 imageTag:
 
 port: 80
 rpm: 5
-# NEED TO ADD IMAGETAG AND HOSTNAME AS HELM VALUES IN DEPLOYMENT!
 hostname:
