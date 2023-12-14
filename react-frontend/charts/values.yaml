@@ -1,0 +1,6 @@
+image: docker.io/jakepelter/patel-pets-website
+imageTag:
+
+port: 80
+rpm: 5
+hostname:
