@@ -36,8 +36,8 @@ jobs:
 
     - name: Helm upgrade
       run: |
-        helm upgrade ${{ env.RELEASE_NAME }} react-frontend/charts --namespace pets \
-        --set imageTag=${{ github.sha }},hostname=${{ env.HOSTNAME }} \
+        helm upgrade ${RELEASE_NAME}-website react-frontend/charts --namespace pets \
+        --set imageTag=${{ github.sha }},hostname=${HOSTNAME} \
         --install \
         --wait
       env:
