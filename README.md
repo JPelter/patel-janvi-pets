@@ -7,5 +7,17 @@ The code for this project is stored in GitHub. There is a React website, a Pytho
 The repo contains YAML that created the Kubernetes namespace and service account to administer the namespace.
 
 # React Frontend
+Multi-stage docker build with node then nginx.
+| Environment | Cluster Host | Internet Host |
+| ----------- | ----------- | ----------- |
+| LOCAL | N/A | http://localhost:3000 |
+| DEV | http://pets-dev-website.pets.svc.cluster.local:80 | https://pets-dev.mtcloud.pelter.net/ |
+| PROD | http://pets-website.pets.svc.cluster.local:80 | https://pets.mtcloud.pelter.net/ |
 
-Just the 'Hello World' app. Multi-stage docker build with node then nginx.
+# Python Flask API
+Notice that the internet URL matches the frontend client, the path /api is present for all API endpoints.
+| Environment | Cluster Host | Internet Host |
+| ----------- | ----------- | ----------- |
+| LOCAL | N/A | http://localhost:8080 |
+| DEV | http://pets-dev-api.pets.svc.cluster.local:8080 | https://pets-dev.mtcloud.pelter.net/api |
+| PROD |  http://pets-api.pets.svc.cluster.local:8080 | https://pets.mtcloud.pelter.net/api |

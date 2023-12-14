@@ -10,11 +10,6 @@ app = Flask(__name__)
 #########################
 ##### SERVER ROUTES #####
 #########################
-@app.route("/", methods=['GET'])
-def hello_world():
-    print("Someone visited!")
-    return "<p>Hello world and all who inhabit it!</p>"
-
 @app.route("/api", methods=['GET'])
 def hello_world2():
     print("Someone viffffffasdsited!")
