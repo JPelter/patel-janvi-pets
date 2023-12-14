@@ -5,6 +5,7 @@ on:
     branches: [ "main", "feature/*" ]
     paths:
       - react-frontend/**
+      - .github/workflows/react-frontend.yml
 
 jobs:
   build-release:
@@ -38,6 +39,7 @@ jobs:
       run: |
         echo ${{ secrets.KUBECONFIG }} | base64 --decode > ${GITHUB_WORKSPACE}/kubeconfig
         export KUBECONFIG=${GITHUB_WORKSPACE}/kubeconfig
+        echo $KUBECONFIG
       
     - name: Helm upgrade
       run: |
