@@ -37,7 +37,7 @@ jobs:
     - name: Create Kubeconfig file
       run: |
         echo ${{ secrets.KUBECONFIG }} | base64 --decode > ${GITHUB_WORKSPACE}/kubeconfig
-        echo "KUBECONFIG=${GITHUB_WORKSPACE}/kubeconfig"
+        export KUBECONFIG=${GITHUB_WORKSPACE}/kubeconfig
       
     - name: Helm upgrade
       run: |
