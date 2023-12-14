@@ -9,9 +9,10 @@ trigger:
     - react-frontend
 #
 schedules:
-- cron: 0 0 * * 0 # SUNDAY MIDNIGHT UTC BUILD!
+- cron: 0 8 * * * # DAILY BUILD 8AM UTC => 3AM EST/4AM EDT
   branches:
     include:
+    - feature/*
     - main
   always: true
 
