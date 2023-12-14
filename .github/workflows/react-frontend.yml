@@ -33,12 +33,13 @@ jobs:
       uses: azure/setup-helm@v3
       with:
         version: 'v3.5.0' # default is latest (stable)
-
+    - name: Build configuration
+      run: |
+        echo ${{ secrets.KUBECONFIG }} > ${GITHUB_WORKSPACE}/kubeconfig
+      
     - name: Helm upgrade
       run: |
         helm upgrade ${{ vars.RELEASE_NAME }}-website react-frontend/charts --namespace pets \
         --set imageTag=${{ github.sha }},hostname=${{ vars.HOSTNAME }} \
         --install \
         --wait
-      env:
-        KUBECONFIG: ${{ secrets.KUBECONFIG }}
