@@ -35,7 +35,9 @@ jobs:
         version: 'v3.5.0' # default is latest (stable)
 
     - name: Create Kubeconfig file
-      run: echo ${{ secrets.KUBECONFIG }} | base64 --decode > ${GITHUB_WORKSPACE}/kubeconfig
+      run: |
+        echo ${{ secrets.KUBECONFIG }} | base64 --decode > ${GITHUB_WORKSPACE}/kubeconfig
+        echo "KUBECONFIG=${GITHUB_WORKSPACE}/kubeconfig"
       
     - name: Helm upgrade
       run: |
