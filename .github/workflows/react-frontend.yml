@@ -29,3 +29,8 @@ jobs:
         file: react-frontend/Dockerfile
         push: true
         tags: jakepelter/patel-pets-website:${{ github.sha }}
+
+    - name: Install Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: 'v3.5.0' # default is latest (stable)
