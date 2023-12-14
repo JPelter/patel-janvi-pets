@@ -38,12 +38,11 @@ jobs:
     - name: Create Kubeconfig file
       run: |
         echo ${{ secrets.KUBECONFIG }} | base64 --decode > ${GITHUB_WORKSPACE}/kubeconfig
-        export KUBECONFIG=${GITHUB_WORKSPACE}/kubeconfig
-        echo $KUBECONFIG
       
     - name: Helm upgrade
       run: |
         helm upgrade ${{ vars.RELEASE_NAME }}-website react-frontend/charts --namespace pets \
         --set imageTag=${{ github.sha }},hostname=${{ vars.HOSTNAME }} \
+        --kubeconfig ${GITHUB_WORKSPACE}/kubeconfig \
         --install \
         --wait
