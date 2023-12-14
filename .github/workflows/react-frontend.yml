@@ -28,6 +28,7 @@ jobs:
         tags: jakepelter/patel-pets-website:${{ github.sha }}
 
   release:
+    needs: build
     runs-on: ubuntu-latest
     steps:
     - name: Install Helm
