@@ -1,0 +1,3 @@
+apiVersion: v2
+name: pets-liquibase
+version: 1.0.0

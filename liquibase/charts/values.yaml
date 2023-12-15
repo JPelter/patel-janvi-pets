@@ -1,0 +1,5 @@
+imageTag:
+imagePullSecret: jakep-dockerhub
+
+postgresURL:
+postgreSecret:
