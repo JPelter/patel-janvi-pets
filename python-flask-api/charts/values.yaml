@@ -6,3 +6,6 @@ imagePullSecret: jakep-dockerhub
 port: 8080
 rpm: 100
 hostname:
+
+postgresURL:
+postgresSecret:

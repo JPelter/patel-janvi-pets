@@ -25,6 +25,7 @@ db_engine = create_engine(f"postgresql://postgres:{environ['POSTGRES_PASSWORD']}
 db_Base = automap_base()
 db_Base.prepare(db_engine)
 
+# DON'T LOVE THIS RENAMING
 ACCOUNT = db_Base.classes.account
 
 ##################################
