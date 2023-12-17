@@ -19,6 +19,9 @@ spec:
         image: {{ .Values.image }}:{{ .Values.imageTag }}
         ports:
         - containerPort: {{ .Values.port }}
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
 ---
 apiVersion: v1
 kind: Service
