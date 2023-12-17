@@ -29,6 +29,20 @@ spec:
             secretKeyRef:
               name: {{ .Values.postgresSecret }}
               key: db-admin-pw
+        - name: EMAIL_ACCOUNT
+          valueFrom:
+            secretKeyRef:
+              name: email-creds
+              key: username
+        - name: EMAIL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: email-creds
+              key: password
+        - name: SENDER_EMAIL
+          value: {{ .Values.senderEmail }}
+        - name: SMTP_RELAY
+          value: {{ .Values.smtpRelay }}
 ---
 apiVersion: v1
 kind: Service

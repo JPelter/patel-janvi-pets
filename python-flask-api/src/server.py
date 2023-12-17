@@ -1,7 +1,6 @@
 # STL
 from os import environ
 
-
 # EXT
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
@@ -25,13 +24,15 @@ db_engine = create_engine(f"postgresql://postgres:{environ['POSTGRES_PASSWORD']}
 db_Base = automap_base()
 db_Base.prepare(db_engine)
 
-# DON'T LOVE THIS RENAMING
+# JUST A RENAMING I LIKE, NOT SURE THAT I LOVE
 ACCOUNT = db_Base.classes.account
+
+# TODO: LOGIN ROLE REQUIRED DECORATOR
 
 ##################################
 ##### IMPORTED SERVER ROUTES #####
 ##################################
-from auth import *
+from auth_routes import *
 
 ########################
 ###### STARTUP!!! ######
