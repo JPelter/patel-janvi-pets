@@ -25,10 +25,7 @@ db_engine = create_engine(f"postgresql://postgres:{environ['POSTGRES_PASSWORD']}
 db_Base = automap_base()
 db_Base.prepare(db_engine)
 
-# JUST A RENAMING I LIKE, NOT SURE THAT I LOVE
 ACCOUNT = db_Base.classes.account
-
-# TODO: LOGIN ROLE REQUIRED DECORATOR
 
 ##################################
 ##### IMPORTED SERVER ROUTES #####
@@ -41,14 +38,14 @@ from auth_routes import *
 if __name__ == '__main__':
     @app.route("/api/health", methods=['GET'])
     def healthcheck_endpoint():
-        current_accounts = db.session.query(ACCOUNT).count()
-        print(f"Someone checked the health endpoint when there was {current_accounts} accounts!")
-        return jsonify({"message":"Still alive!", "accounts":current_accounts})
+        print(f"Someone checked the health endpoint!")
+        return jsonify({"message":"Still alive!"})
     
     @app.route("/api/auth", methods=['GET'])
     @login_required() # EXAMPLE OF HOW TO USE THE LOGIN REQUIRED DECOCATOR! OPTIONAL STRING ARGUMENT TO SPECIFY ROLE!
     def authcheck_endpoint(role_required=None):
-        print(f"Someone checked the authcheck endpoint!")
+        current_accounts = db.session.query(ACCOUNT).count()
+        print(f"Someone checked the authcheck endpoint when there was {current_accounts} accounts!")
         if session.get('email'):
             return jsonify({"message":"Authenticated!", "email":session['email'], "session_start":session['creation_time']})
         else:

@@ -12,7 +12,7 @@ import string
 from flask import jsonify, request, session
 from server import app, db, ACCOUNT
 
-login_token_minutes = 15 # TIME FOR TOKEN TO EXPIRE AND TOKEN REQUEST RATELIMIT TIME
+login_token_minutes = 15 # TIME FOR TOKEN TO EXPIRE AND TOKEN REQUEST RATE LIMIT TIME
 
 @app.route("/api/login-token", methods=['GET'])
 def token_request_endpoint():
@@ -23,7 +23,7 @@ def token_request_endpoint():
         req_acct = ACCOUNT(email=request.json["email"], login_token=new_token)
         db.session.add(req_acct)
     else:
-        ### PROTECTION AGAINST BRUTE FORCE TOKEN CRACKING!
+        ### PROTECTION AGAINST SPAM TOKEN CREATION AND EMAIL SEND!
         if datetime.now(timezone.utc) < req_acct.request_time + timedelta(minutes=login_token_minutes): # IF IT HAS BEEN LESS THAN 15 MINUTES SINCE LAST REQUEST TIME
             if req_acct.recent_request_counter > 3: # AND IF THE USER HAS RECENTLY REQUESTED MORE THAN 3 TOKENS!
                 # DON'T DO ANYTHING! WE MIGHT BE UNDER ATTACK!
@@ -67,6 +67,7 @@ def token_post_endpoint():
 @app.route("/api/login-token", methods=['DELETE'])
 def logout_endpoint():
     session.clear()
+    # TODO MAKE IT POSSIBLE TO EXPIRE EXISTING SESSIONS FROM OTHER DEVICES (BY SETTING A LOGOUT TIME IN ACCOUNT?)
     return jsonify({"message":"Session cookie cleared!"})
 
 def login_required(role_required=None):
@@ -78,6 +79,6 @@ def login_required(role_required=None):
                 # TODO GET ROLES OF ACCOUNT AND VERIFY AGAINST REQUIRED ROLE!
                 return function_to_protect(*args, **kwargs)
             else:
-                return jsonify({"message":"Bad session cookie! Log out and back in!"}), 403
+                return jsonify({"message":"Try logging in!"}), 401
         return wrapper
     return decorator

@@ -5,12 +5,12 @@ imagePullSecret: jakep-dockerhub
 
 port: 8080
 rpm: 100
-hostname: pets-dev.mtcloud.pelter.net
+hostname: pets-dev.pelter.net
 
 postgresURL: storage-dev.pets.svc.cluster.local:5432/postgres
 postgresSecret: storage-dev-creds
 
 smtpRelay: smtp-relay.gmail.com
-senderEmail: noreply@pets-dev.mtcloud.pelter.net
+senderEmail: noreply@pets-dev.pelter.net
 
 flaskSecret: flask-secret-dev
