@@ -2,13 +2,11 @@ imagePullSecret: jakep-dockerhub
 storage: 4Gi # SMALLEST AZURE STORAGE DISK, CAN RE-SIZE UP!
 
 postgres:
-  image:
   memory: 100Mi
   cpu: 100m
   port: 5432
 
 minio:
-  image:
   memory: 100Mi
   cpu: 100m
   apiPort: 9000

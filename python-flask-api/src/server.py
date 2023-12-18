@@ -50,7 +50,7 @@ if __name__ == '__main__':
     def authcheck_endpoint(role_required=None):
         print(f"Someone checked the authcheck endpoint!")
         if session.get('email'):
-            return jsonify({"message":"Authenticated!", "email":session['email']})
+            return jsonify({"message":"Authenticated!", "email":session['email'], "session_start":session['creation_time']})
         else:
             return jsonify({"message":"Not authenticated!"}), 403
     db.init_app(app)
