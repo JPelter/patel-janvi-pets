@@ -1,5 +1,6 @@
 # STL
 from datetime import datetime, timedelta, timezone
+from functools import partial, wraps
 import random
 from email.message import EmailMessage
 from os import environ
@@ -8,7 +9,7 @@ import smtplib
 import string
 
 # AUTH
-from flask import jsonify, request
+from flask import jsonify, request, session
 from server import app, db, ACCOUNT
 
 login_token_minutes = 15 # TIME FOR TOKEN TO EXPIRE AND TOKEN REQUEST RATELIMIT TIME
@@ -51,3 +52,32 @@ def token_request_endpoint():
     s.send_message(msg)
     s.quit()
     return jsonify({"message":"Login token sent to email!", "email":request.json["email"]})
+
+@app.route("/api/login-token", methods=['POST'])
+def token_post_endpoint():
+    req_acct = db.session.query(ACCOUNT).get(request.json["email"])
+    if datetime.now(timezone.utc) < req_acct.request_time + timedelta(minutes=login_token_minutes) and req_acct.login_token == request.json["login_token"]:
+        session['email'] = request.json["email"]
+        session['creation_time'] = datetime.now(timezone.utc)
+        req_acct.last_successful_login = session['creation_time']
+        return jsonify({"message":"Token exchanged for authenticating session cookie!", "email":request.json["email"]})
+    else:
+        return jsonify({"message":"Expired or incorrect token!", "email":request.json["email"]}), 403
+    
+@app.route("/api/login-token", methods=['DELETE'])
+def logout_endpoint():
+    session.clear()
+    return jsonify({"message":"Session cookie cleared!"})
+
+def login_required(role_required=None):
+    def decorator(function_to_protect):
+        @wraps(function_to_protect)
+        def wrapper(*args, **kwargs):
+            if session.get('email'):
+                req_acct = db.session.query(ACCOUNT).get(session["email"])
+                # TODO GET ROLES OF ACCOUNT AND VERIFY AGAINST REQUIRED ROLE!
+                return function_to_protect(*args, **kwargs)
+            else:
+                return jsonify({"message":"Bad session cookie! Log out and back in!"}), 403
+        return wrapper
+    return decorator

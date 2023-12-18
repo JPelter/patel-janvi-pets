@@ -12,11 +12,12 @@ from sqlalchemy.ext.automap import automap_base
 from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func
 
-from flask import Flask
+from flask import Flask, session
 ########################
 #### COMMON OBJECTS ####
 ########################
 app = Flask(__name__)
+app.secret_key = environ['FLASK_SECRET']
 db = SQLAlchemy()
 app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://postgres:{environ['POSTGRES_PASSWORD']}@{environ['POSTGRES_HOST']}"
 
@@ -43,7 +44,15 @@ if __name__ == '__main__':
         current_accounts = db.session.query(ACCOUNT).count()
         print(f"Someone checked the health endpoint when there was {current_accounts} accounts!")
         return jsonify({"message":"Still alive!", "accounts":current_accounts})
-        
+    
+    @app.route("/api/auth", methods=['GET'])
+    @login_required() # EXAMPLE OF HOW TO USE THE LOGIN REQUIRED DECOCATOR! OPTIONAL STRING ARGUMENT TO SPECIFY ROLE!
+    def authcheck_endpoint(role_required=None):
+        print(f"Someone checked the authcheck endpoint!")
+        if session.get('email'):
+            return jsonify({"message":"Authenticated!", "email":session['email']})
+        else:
+            return jsonify({"message":"Not authenticated!"}), 403
     db.init_app(app)
     print("Starting server!")
     serve(app, host='0.0.0.0', port=8080)

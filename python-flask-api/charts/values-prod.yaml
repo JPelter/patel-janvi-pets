@@ -10,4 +10,7 @@ hostname:
 postgresURL: storage.pets.svc.cluster.local:5432/postgres
 postgresSecret: storage-creds
 
+smtpRelay: smtp-relay.gmail.com
 senderEmail:
+
+flaskSecret: flask-secret

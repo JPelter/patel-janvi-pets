@@ -12,3 +12,5 @@ postgresSecret: storage-dev-creds
 
 smtpRelay: smtp-relay.gmail.com
 senderEmail: noreply@pets-dev.mtcloud.pelter.net
+
+flaskSecret: flask-secret-dev
