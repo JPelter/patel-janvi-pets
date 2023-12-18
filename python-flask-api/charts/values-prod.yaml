@@ -1,0 +1,16 @@
+# NEED TO ADD IMAGETAG AND HOSTNAME AS VALUES IN HELM DEPLOYMENT!
+image: docker.io/jakepelter/patel-pets-api
+imageTag:
+imagePullSecret: jakep-dockerhub
+
+port: 8080
+rpm: 100
+hostname: pets.mtcloud.pelter.net
+
+postgresURL: storage.pets.svc.cluster.local:5432/postgres
+postgresSecret: storage-creds
+
+smtpRelay: smtp-relay.gmail.com # ?
+senderEmail:
+
+flaskSecret: flask-secret
