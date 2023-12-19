@@ -1,7 +1,7 @@
 function Chat() {
     return (
         <div>
-            
+            <p>CHAT TODO!</p>
         </div>
     );
 }

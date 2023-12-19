@@ -22,24 +22,26 @@ export default function ButtonAppBar({Authenticated, setAuthenticated}) {
                 Services
             </Typography>
           </Link>
-          {Authenticated ? (
+          {Authenticated && (
             <>
-                <Link to="/appointments">
-                    <Typography variant="h6" component="div">
-                        Appointments
-                    </Typography>
-                </Link>
-                <Link to="/chat">
-                    <Typography variant="h6" component="div" >
-                        Chat
-                    </Typography>
-                </Link>
-                <div sx={{ flexGrow: 1 }}></div>
-                <Button >Logout</Button>
+              <Link to="/appointments">
+                  <Typography variant="h6" component="div">
+                      Appointments
+                  </Typography>
+              </Link>
+              <Link to="/chat">
+                  <Typography variant="h6" component="div">
+                      Chat
+                  </Typography>
+              </Link>
             </>
-            ) : (
-            <Button>Login</Button>
           )}
+          <div sx={{ flexGrow: 1 }}></div>
+          <Link to="/account">
+            <Typography variant="h6" component="div">
+                Account
+            </Typography>
+          </Link>
         </Toolbar>
       </AppBar>
     </Box>

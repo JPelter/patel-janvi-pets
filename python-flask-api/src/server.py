@@ -43,7 +43,7 @@ if __name__ == '__main__':
     
     @app.route("/api/auth", methods=['GET'])
     @login_required() # EXAMPLE OF HOW TO USE THE LOGIN REQUIRED DECOCATOR! OPTIONAL STRING ARGUMENT TO SPECIFY ROLE!
-    def authcheck_endpoint(role_required=None):
+    def authcheck_endpoint(admin_endpoint=False):
         current_accounts = db.session.query(ACCOUNT).count()
         print(f"Someone checked the authcheck endpoint when there was {current_accounts} accounts!")
         if session.get('email'):

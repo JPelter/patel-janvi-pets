@@ -6,7 +6,7 @@ import Home from './Home';
 import Services from './Services';
 import Appointments from './Appointments';
 import Chat from './Chat';
-// import Login from './Login';
+import Account from './Account';
 
 function App() {
   const [ Authenticated, setAuthenticated ] = useState(false);
@@ -35,13 +35,12 @@ function App() {
         <Routes>
           <Route path="/" exact component={Home} />
           <Route path="/services" component={Services} />
-          {Authenticated ? (
+          <Route path="/account" component={Account} />
+          {Authenticated && (
             <>
               <Route path="/appointments" component={Appointments} />
               <Route path="/chat" component={Chat} />
             </>
-          ) : (
-            <Route path="/login" component={Chat} />
           )}
         </Routes>
     </Router>

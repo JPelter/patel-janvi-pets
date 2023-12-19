@@ -70,14 +70,16 @@ def logout_endpoint():
     # TODO MAKE IT POSSIBLE TO EXPIRE EXISTING SESSIONS FROM OTHER DEVICES (BY SETTING A LOGOUT TIME IN ACCOUNT?)
     return jsonify({"message":"Session cookie cleared!"})
 
-def login_required(role_required=None):
+def login_required(admin_endpoint=False):
     def decorator(function_to_protect):
         @wraps(function_to_protect)
         def wrapper(*args, **kwargs):
             if session.get('email'):
                 req_acct = db.session.query(ACCOUNT).get(session["email"])
-                # TODO GET ROLES OF ACCOUNT AND VERIFY AGAINST REQUIRED ROLE!
-                return function_to_protect(*args, **kwargs)
+                if admin_endpoint == "admin" and not req_acct.admin_account:
+                    return jsonify({"message":"Not authorized sorry!"}), 403
+                else:
+                    return function_to_protect(*args, **kwargs)
             else:
                 return jsonify({"message":"Try logging in!"}), 401
         return wrapper

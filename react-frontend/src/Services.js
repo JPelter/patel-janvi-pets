@@ -1,7 +1,7 @@
 function Services() {
     return (
         <div>
-            
+            <p>SERVICES!</p>
         </div>
     );
 }
