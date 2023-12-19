@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "command": "npm run start --prefix react-frontend",
+            "name": "React Frontend",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+
+        {
             "envFile": "C:\\Users\\jakep\\Desktop\\GitHub Repos\\patel-janvi-pets\\python-flask-api\\src\\.env",
             "name": "Flask API",
             "type": "python",
