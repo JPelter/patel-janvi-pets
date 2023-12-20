@@ -1,6 +1,6 @@
 function Chat() {
     return (
-        <div>
+        <div style={{ textAlign: 'center' }}>
             <p>CHAT TODO!</p>
         </div>
     );

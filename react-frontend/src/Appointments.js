@@ -1,7 +1,7 @@
 function Appointments() {
     return (
-        <div>
-            <p>CHAT TODO!</p>
+        <div style={{ textAlign: 'center' }}>
+            <p>APPOINTMENTS TODO!</p>
         </div>
     );
 }

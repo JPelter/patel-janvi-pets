@@ -1,7 +1,7 @@
 function ACCOUNT() {
     // WILL NEED THREE COMPONENTS! FOR BOTH AUTHENTICATED AND UN-AUTHENTICATED STATE! AND THEN AN AUTHENTICATED "WALKER"!
     return (
-        <div>
+        <div style={{ textAlign: 'center' }}>
             <p>ACCOUNT TODO!</p>
         </div>
     );

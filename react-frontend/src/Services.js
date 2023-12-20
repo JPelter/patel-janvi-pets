@@ -1,6 +1,6 @@
 function Services() {
     return (
-        <div>
+        <div style={{ textAlign: 'center' }}>
             <p>SERVICES!</p>
         </div>
     );
