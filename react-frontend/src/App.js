@@ -28,17 +28,17 @@ function App() {
   return (
     <Router>
       <NavBar authenticated={authenticated}/>
-        <Routes>
-          <Route path="/" exact element={Home} /> f
-          <Route path="/services" element={Services} />
-          <Route path="/account" element={Account} />
-          {authenticated && (
-            <>
-              <Route path="/appointments" element={Appointments} />
-              <Route path="/chat" element={Chat} />
-            </>
-          )}
-        </Routes>
+      <Routes>
+        <Route path="/" exact element={<Home/>} /> f
+        <Route path="/services" element={<Services/>} />
+        <Route path="/account" element={<Account/>} />
+        {authenticated && (
+          <>
+            <Route path="/appointments" element={<Appointments/>} />
+            <Route path="/chat" element={<Chat/>} />
+          </>
+        )}
+      </Routes>
     </Router>
   );
 }
