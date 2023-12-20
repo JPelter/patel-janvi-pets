@@ -16,7 +16,7 @@ export default function ButtonAppBar(props) {
     color: 'white',
     margin: '2px',
     transition: 'background-color 0.3s ease',
-    '&:hover': { backgroundColor: '#555' }
+    '&:hover': { backgroundColor: '#f50057' }
   };
 
   return (
