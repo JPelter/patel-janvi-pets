@@ -1,7 +1,7 @@
 function Appointments() {
     return (
         <div>
-            
+            <p>CHAT TODO!</p>
         </div>
     );
 }

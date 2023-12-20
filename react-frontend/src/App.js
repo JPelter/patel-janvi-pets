@@ -9,37 +9,33 @@ import Chat from './Chat';
 import Account from './Account';
 
 function App() {
-  const [ Authenticated, setAuthenticated ] = useState(false);
+  const [authenticated, setAuthenticated ] = useState(false);
 
   useEffect(() => {
-    // Simulated authentication check on app load
-    // Replace this with your actual API call to check authentication
     async function checkAuth() {
       try {
-        const response = await fetch(process.env.REACT_APP_AUTH_API);
+        const response = await fetch(`${process.env.REACT_APP_API_AUTHCHECK}`);
         if (response.status === 200) {
           setAuthenticated(true);
-        } else {
-          setAuthenticated(false);
         }
       } catch (error) {
-        setAuthenticated(false);
+        // NADA!
       }
     }
     checkAuth();
-  }, [setAuthenticated]);
+  }, []);
 
   return (
     <Router>
-      <NavBar Authenticated={Authenticated} setAuthenticated={setAuthenticated}/>
+      <NavBar authenticated={authenticated}/>
         <Routes>
-          <Route path="/" exact component={Home} />
-          <Route path="/services" component={Services} />
-          <Route path="/account" component={Account} />
-          {Authenticated && (
+          <Route path="/" exact element={Home} /> f
+          <Route path="/services" element={Services} />
+          <Route path="/account" element={Account} />
+          {authenticated && (
             <>
-              <Route path="/appointments" component={Appointments} />
-              <Route path="/chat" component={Chat} />
+              <Route path="/appointments" element={Appointments} />
+              <Route path="/chat" element={Chat} />
             </>
           )}
         </Routes>

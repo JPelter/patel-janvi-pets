@@ -38,18 +38,18 @@ from auth_routes import *
 if __name__ == '__main__':
     @app.route("/api/health", methods=['GET'])
     def healthcheck_endpoint():
-        print(f"Someone checked the health endpoint!")
         return jsonify({"message":"Still alive!"})
     
-    @app.route("/api/auth", methods=['GET'])
-    @login_required() # EXAMPLE OF HOW TO USE THE LOGIN REQUIRED DECOCATOR! OPTIONAL STRING ARGUMENT TO SPECIFY ROLE!
-    def authcheck_endpoint(admin_endpoint=False):
-        current_accounts = db.session.query(ACCOUNT).count()
-        print(f"Someone checked the authcheck endpoint when there was {current_accounts} accounts!")
-        if session.get('email'):
-            return jsonify({"message":"Authenticated!", "email":session['email'], "session_start":session['creation_time']})
-        else:
-            return jsonify({"message":"Not authenticated!"}), 403
+    @app.route("/api/authcheck", methods=['GET'])
+    @login_required(admin_endpoint=False) # EXAMPLE OF HOW TO USE THE LOGIN REQUIRED DECOCATOR! OPTIONAL ARGUMENT, DEFAULT IS False!
+    def authcheck_endpoint():
+        return jsonify({"message":"Authenticated!", "email":session['email'], "session_start":session['creation_time']})
+        
+    @app.route("/api/admincheck", methods=['GET'])
+    @login_required(admin_endpoint=True) # EXAMPLE OF HOW TO MAKE ADMIN ENDPOINT!
+    def admincheck_endpoint():
+        return jsonify({"message":"Admin!", "email":session['email'], "session_start":session['creation_time']})
+
     db.init_app(app)
     print("Starting server!")
     serve(app, host='0.0.0.0', port=8080)
