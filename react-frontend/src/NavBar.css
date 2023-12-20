@@ -2,4 +2,12 @@ a.active {
     background-color: #fff; /* Change to the highlight color for active link */
     color: #333; /* Change to the text color for active link */
     /* Add any other styles you want for active links */
-  }  
+  }
+
+AppBar {
+ margin: 0px;
+}
+
+AppBar-Mobile {
+  margin: 0px;
+}

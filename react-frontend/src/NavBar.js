@@ -7,8 +7,8 @@ import { NavLink } from 'react-router-dom';
 
 import './NavBar.css';
 
-export default function ButtonAppBar({ authenticated, setAuthenticated }) {
-
+export default function ButtonAppBar(props) {
+  
   return (
     <AppBar position="static" style={{ backgroundColor: '#333' }}>
       <Toolbar>
@@ -18,7 +18,7 @@ export default function ButtonAppBar({ authenticated, setAuthenticated }) {
         <Button component={NavLink} to="/services" style={{ marginRight: '10px' }} variant="contained" color="primary" activeClassName="active">
           SERVICES
         </Button>
-        {authenticated && (
+        {props.authenticated && (
           <>
             <Button component={NavLink} to="/appointments" style={{ marginRight: '10px' }} variant="contained" color="primary" activeClassName="active">
               APPOINTMENTS

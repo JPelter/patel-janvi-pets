@@ -10,7 +10,9 @@ import Account from './Account';
 
 function App() {
   const [authenticated, setAuthenticated ] = useState(false);
-
+  // const [width, height] = [window.screen.width, window.screen.height];
+  // const isMobile = Math.min(width, height) < 768;
+  
   useEffect(() => {
     async function checkAuth() {
       try {
