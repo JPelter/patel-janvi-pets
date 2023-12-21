@@ -10,11 +10,12 @@ function UnauthenticatedComponent() {
     const handleSubmitEmail = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.get(`${process.env.REACT_APP_API_TOKEN}`, {
+            const response = await axios.post(`${process.env.REACT_APP_API_TOKEN_EMAIL}`, {
+                email: email // Assign email to the 'email' key in the data object
+            }, {
                 headers: {
                     'Content-Type': 'application/json'
-                },
-                data: { email } // Send email as a query parameter
+                }
             });
             console.log('Token email request sent:', response.data);
         } catch (error) {
@@ -25,21 +26,19 @@ function UnauthenticatedComponent() {
 
     const handleSubmitToken = async (e) => {
         e.preventDefault();
-        fetch(`${process.env.REACT_APP_API_TOKEN}`, {
-            method: 'POST',
-            body: JSON.stringify({ token }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Session obtained:', data);
-            // Handle the response accordingly
-        })
-        .catch(error => {
-            console.error('Error obtaining session:', error);
-        });
+        try {
+            const response = await axios.post(`${process.env.REACT_APP_API_TOKEN_EXCHANGE}`, {
+                email: email, // Assign email to the 'email' key in the data object
+                login_token: token
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log('Token exchanged for session cookie:', response.data);
+        } catch (error) {
+            console.error('Error sending token email request:', error);
+        }
     };
 
     return (

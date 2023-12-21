@@ -14,22 +14,22 @@ from server import app, db, ACCOUNT
 
 login_token_minutes = 15 # TIME FOR TOKEN TO EXPIRE AND TOKEN REQUEST RATE LIMIT TIME
 
-@app.route("/api/login-token", methods=['GET'])
+@app.route("/api/login-token-email", methods=['POST'])
 def token_request_endpoint():
     # QUERY FOR ACCOUNT OBJECT ON EMAIL
-    print(f"got: {request.json['email']}")
-    req_acct = db.session.query(ACCOUNT).get(request.json["email"])
+    app.logger.info(f"Login token email request for: {request.get_json()['email']}")
+    req_acct = db.session.query(ACCOUNT).filter(ACCOUNT.email == request.get_json()['email']).first()
     new_token = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(6))
     if not req_acct: # HANDLE CASE WHEN ACCOUNT DOESN'T EXIST YET!
-        print(f"creating account: {request.json['email']}")
-        req_acct = ACCOUNT(email=request.json["email"], login_token=new_token)
+        req_acct = ACCOUNT(email=request.get_json()["email"], login_token=new_token)
         db.session.add(req_acct)
+        app.logger.info(f"Created ACCOUNT for: {request.get_json()['email']}")
     else:
         ### PROTECTION AGAINST SPAM TOKEN CREATION AND EMAIL SEND!
-        print(f"generating token for: {request.json['email']}")
         if datetime.now(timezone.utc) < req_acct.request_time + timedelta(minutes=login_token_minutes): # IF IT HAS BEEN LESS THAN 15 MINUTES SINCE LAST REQUEST TIME
             if req_acct.recent_request_counter > 3: # AND IF THE USER HAS RECENTLY REQUESTED MORE THAN 3 TOKENS!
                 # DON'T DO ANYTHING! WE MIGHT BE UNDER ATTACK!
+                app.logger.info(f"Too many token email requests for: {request.get_json()['email']}")
                 return jsonify({"message":f"Try again after {login_token_minutes} minutes!"}), 429 # HTTP CODE FOR RATE LIMITING
         else: # IF MORE THAN 15 MINUTES HAVE PASSED SINCE LAST REQUEST, RESET COUNTER TO 0!
             req_acct.recent_request_counter = 0
@@ -38,8 +38,8 @@ def token_request_endpoint():
         req_acct.request_time = datetime.now(timezone.utc)
         req_acct.recent_request_counter = req_acct.recent_request_counter + 1
         req_acct.login_token = new_token
-        
-    print(f"committing for: {request.json['email']}")
+        app.logger.info(f"Token generated for: {request.get_json()['email']}")
+
     db.session.commit()
     # NOW WE SEND USER THE EMAIL CONTAINING THEIR LOGIN TOKEN!
     msg = EmailMessage()
@@ -47,34 +47,34 @@ def token_request_endpoint():
 
     msg['Subject'] = "Pets Login Token!"
     msg['From'] = environ["SENDER_EMAIL"]
-    msg['To'] = request.json["email"]
+    msg['To'] = request.get_json()["email"]
 
-    print(f"emailing for: {request.json['email']}")
     s = smtplib.SMTP(environ['SMTP_RELAY'], 587, timeout=15) # try ports 25, 465, 587
     s.starttls()
-    print(request.json["email"])
     s.login(environ["EMAIL_ACCOUNT"], environ["EMAIL_PASSWORD"])
     s.send_message(msg)
-    print(request.json["email"])
     s.quit()
-    print(f"emailed for: {request.json['email']}")
-    return jsonify({"message":"Login token sent to email!", "email":request.json["email"]})
+    app.logger.info(f"Token emailed for: {request.get_json()['email']}")
+    return jsonify({"message":"Login token sent to email!", "email":request.get_json()["email"]})
 
-@app.route("/api/login-token", methods=['POST'])
+@app.route("/api/login-token-exchange", methods=['POST'])
 def token_post_endpoint():
-    req_acct = db.session.query(ACCOUNT).get(request.json["email"])
-    if datetime.now(timezone.utc) < req_acct.request_time + timedelta(minutes=login_token_minutes) and req_acct.login_token == request.json["login_token"]:
-        session['email'] = request.json["email"]
+    app.logger.info(f"Token exchange request for: {request.get_json()['email']} with token: {request.get_json()['login_token']}")
+    req_acct = db.session.query(ACCOUNT).filter(ACCOUNT.email == request.get_json()["email"]).first()
+    if datetime.now(timezone.utc) < req_acct.request_time + timedelta(minutes=login_token_minutes) and req_acct.login_token == request.get_json()["login_token"]:
+        session['email'] = request.get_json()["email"]
         session['creation_time'] = datetime.now(timezone.utc)
         req_acct.last_successful_login = session['creation_time']
-        return jsonify({"message":"Token exchanged for authenticating session cookie!", "email":request.json["email"]})
+        app.logger.info(f"Created session cookie for: {request.get_json()['email']}")
+        return jsonify({"message":"Token exchanged for authenticating session cookie!", "email":request.get_json()["email"]})
     else:
-        return jsonify({"message":"Expired or incorrect token!", "email":request.json["email"]}), 403
+        app.logger.info(f"No session cookie for: {request.get_json()['email']}")
+        return jsonify({"message":"Expired or incorrect token!", "email":request.get_json()["email"]}), 403
     
-@app.route("/api/login-token", methods=['DELETE'])
+@app.route("/api/logout", methods=['GET'])
 def logout_endpoint():
     session.clear()
-    # TODO MAKE IT POSSIBLE TO EXPIRE EXISTING SESSIONS FROM OTHER DEVICES (BY SETTING A LOGOUT TIME IN ACCOUNT?)
+    # TODO MAKE IT POSSIBLE TO EXPIRE EXISTING SESSIONS FROM ALL OTHER DEVICES (BY SETTING A LOGOUT TIME IN ACCOUNT?)
     return jsonify({"message":"Session cookie cleared!"})
 
 def login_required(admin_endpoint=False):
@@ -82,7 +82,7 @@ def login_required(admin_endpoint=False):
         @wraps(function_to_protect)
         def wrapper(*args, **kwargs):
             if session.get('email'):
-                req_acct = db.session.query(ACCOUNT).get(session["email"])
+                req_acct = db.session.query(ACCOUNT).filter(ACCOUNT.email == request.get_json()["email"]).first()
                 if admin_endpoint == "admin" and not req_acct.admin_account:
                     return jsonify({"message":"Not authorized sorry!"}), 403
                 else:

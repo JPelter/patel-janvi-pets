@@ -1,4 +1,5 @@
 # STL
+import logging
 from os import environ
 
 # EXT
@@ -19,7 +20,9 @@ from flask import Flask, session
 ################################
 app = Flask(__name__)
 CORS(app) # REMOVE BEFORE PROD LAUNCH? OR WHO CARES?
+app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = environ['FLASK_SECRET']
+app.logger.setLevel(logging.DEBUG) # TWO LOGGERS :?
 db = SQLAlchemy()
 app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://postgres:{environ['POSTGRES_PASSWORD']}@{environ['POSTGRES_HOST']}"
 
@@ -53,5 +56,5 @@ if __name__ == '__main__':
         return jsonify({"message":"Admin!", "email":session['email'], "session_start":session['creation_time']})
 
     db.init_app(app)
-    print("Starting server!")
+    app.logger.info("Starting server!")
     serve(app, host='0.0.0.0', port=8080)

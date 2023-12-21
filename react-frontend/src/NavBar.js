@@ -23,7 +23,7 @@ export default function ButtonAppBar(props) {
     <AppBar position="static" sx={{ backgroundColor: '#333' }}>
       <Toolbar sx={{ justifyContent: 'space-between' }}>
         <div>
-          <IconButton component={NavLink} to="/" exact sx={{ ...commonButtonStyle, ...(location.pathname === '/' ? activeLinkStyle : {}) }}>
+          <IconButton component={NavLink} to="/" exact="true" sx={{ ...commonButtonStyle, ...(location.pathname === '/' ? activeLinkStyle : {}) }}>
             <HomeIcon />
           </IconButton>
           <IconButton component={NavLink} to="/services" sx={{ ...commonButtonStyle, ...(location.pathname === '/services' ? activeLinkStyle : {}) }}>
