@@ -11,11 +11,11 @@ function App() {
   const [authenticated, setAuthenticated ] = useState(false);
   // const [width, height] = [window.screen.width, window.screen.height];
   // const isMobile = Math.min(width, height) < 768;
-  
+
   useEffect(() => {
     async function checkAuth() {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_AUTHCHECK}`);
+        const response = await fetch(`${process.env.REACT_APP_API_AUTHCHECK}`, {credentials: 'include'});
         if (response.status === 200) {
           setAuthenticated(true);
         }
