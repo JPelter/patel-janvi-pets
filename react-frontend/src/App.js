@@ -30,9 +30,9 @@ function App() {
     <Router>
       <NavBar authenticated={authenticated}/>
       <Routes>
-        <Route path="/" exact element={<Home/>} /> f
+        <Route path="/" exact="true" element={<Home/>} /> f
         <Route path="/services" element={<Services/>} />
-        <Route path="/account" element={<Account/>} />
+        <Route path="/account" element={<Account authenticated={authenticated}/>} />
         {authenticated && (
           <>
             <Route path="/appointments" element={<Appointments/>} />
