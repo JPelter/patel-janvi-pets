@@ -10,11 +10,11 @@ function UnauthenticatedComponent() {
     const handleSubmitEmail = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.get(process.env.REACT_APP_API_TOKEN, {
+            const response = await axios.get(`${process.env.REACT_APP_API_TOKEN}`, {
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                params: { email } // Send email as a query parameter
+                data: { email } // Send email as a query parameter
             });
             console.log('Token email request sent:', response.data);
         } catch (error) {

@@ -17,6 +17,7 @@ login_token_minutes = 15 # TIME FOR TOKEN TO EXPIRE AND TOKEN REQUEST RATE LIMIT
 @app.route("/api/login-token", methods=['GET'])
 def token_request_endpoint():
     # QUERY FOR ACCOUNT OBJECT ON EMAIL
+    print(request.json["email"])
     req_acct = db.session.query(ACCOUNT).get(request.json["email"])
     new_token = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(6))
     if not req_acct: # HANDLE CASE WHEN ACCOUNT DOESN'T EXIST YET!
@@ -24,6 +25,7 @@ def token_request_endpoint():
         db.session.add(req_acct)
     else:
         ### PROTECTION AGAINST SPAM TOKEN CREATION AND EMAIL SEND!
+        print(request.json["email"])
         if datetime.now(timezone.utc) < req_acct.request_time + timedelta(minutes=login_token_minutes): # IF IT HAS BEEN LESS THAN 15 MINUTES SINCE LAST REQUEST TIME
             if req_acct.recent_request_counter > 3: # AND IF THE USER HAS RECENTLY REQUESTED MORE THAN 3 TOKENS!
                 # DON'T DO ANYTHING! WE MIGHT BE UNDER ATTACK!
@@ -36,7 +38,7 @@ def token_request_endpoint():
         req_acct.recent_request_counter = req_acct.recent_request_counter + 1
         req_acct.login_token = new_token
         
-
+    print(request.json["email"])
     db.session.commit()
     # NOW WE SEND USER THE EMAIL CONTAINING THEIR LOGIN TOKEN!
     msg = EmailMessage()
@@ -48,8 +50,10 @@ def token_request_endpoint():
 
     s = smtplib.SMTP(environ['SMTP_RELAY'], 587, timeout=15) # try ports 25, 465, 587
     s.starttls()
+    print(request.json["email"])
     s.login(environ["EMAIL_ACCOUNT"], environ["EMAIL_PASSWORD"])
     s.send_message(msg)
+    print(request.json["email"])
     s.quit()
     return jsonify({"message":"Login token sent to email!", "email":request.json["email"]})
 

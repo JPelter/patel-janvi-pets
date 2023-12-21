@@ -3,6 +3,7 @@ from os import environ
 
 # EXT
 from flask import Flask, jsonify, request
+from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
 from waitress import serve
@@ -13,10 +14,11 @@ from sqlalchemy.orm import Session
 from sqlalchemy.sql.expression import func
 
 from flask import Flask, session
-########################
-#### COMMON OBJECTS ####
-########################
+################################
+#### INT AND COMMON OBJECTS ####
+################################
 app = Flask(__name__)
+CORS(app) # REMOVE BEFORE PROD LAUNCH? OR WHO CARES?
 app.secret_key = environ['FLASK_SECRET']
 db = SQLAlchemy()
 app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://postgres:{environ['POSTGRES_PASSWORD']}@{environ['POSTGRES_HOST']}"
