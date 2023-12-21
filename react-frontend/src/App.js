@@ -6,6 +6,8 @@ import Services from './Services';
 import Appointments from './Appointments';
 import Chat from './Chat';
 import Account from './Account';
+import axios from 'axios';
+axios.defaults.withCredentials = true;
 
 function App() {
   const [authenticated, setAuthenticated ] = useState(false);
@@ -15,12 +17,15 @@ function App() {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const response = await fetch(`${process.env.REACT_APP_API_AUTHCHECK}`, {credentials: 'include'});
-        if (response.status === 200) {
-          setAuthenticated(true);
-        }
+        const response = await axios.get(`${process.env.REACT_APP_API_AUTHCHECK}`, {}, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        setAuthenticated(true);
+        console.log('Auth confirmed:', response.data);
       } catch (error) {
-        // NADA!
+          console.error('Error checking auth:', error);
       }
     }
     checkAuth();

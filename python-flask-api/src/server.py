@@ -19,7 +19,7 @@ from flask import Flask, session
 #### INT AND COMMON OBJECTS ####
 ################################
 app = Flask(__name__)
-CORS(app) # REMOVE BEFORE PROD LAUNCH? OR WHO CARES?
+CORS(app, supports_credentials=True) # REMOVE BEFORE PROD LAUNCH? OR WHO CARES?
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = environ['FLASK_SECRET']
 app.logger.setLevel(logging.DEBUG) # TWO LOGGERS :?
@@ -48,6 +48,7 @@ if __name__ == '__main__':
     @app.route("/api/authcheck", methods=['GET'])
     @login_required(admin_endpoint=False) # EXAMPLE OF HOW TO USE THE LOGIN REQUIRED DECOCATOR! OPTIONAL ARGUMENT, DEFAULT IS False!
     def authcheck_endpoint():
+        app.logger.info(f"Authcheck by: {session['email']}")
         return jsonify({"message":"Authenticated!", "email":session['email'], "session_start":session['creation_time']})
         
     @app.route("/api/admincheck", methods=['GET'])

@@ -78,11 +78,12 @@ def logout_endpoint():
     return jsonify({"message":"Session cookie cleared!"})
 
 def login_required(admin_endpoint=False):
+    app.logger.debug(f"login_required API call")
     def decorator(function_to_protect):
         @wraps(function_to_protect)
         def wrapper(*args, **kwargs):
             if session.get('email'):
-                req_acct = db.session.query(ACCOUNT).filter(ACCOUNT.email == request.get_json()["email"]).first()
+                req_acct = db.session.query(ACCOUNT).filter(ACCOUNT.email == session["email"]).first()
                 if admin_endpoint == "admin" and not req_acct.admin_account:
                     return jsonify({"message":"Not authorized sorry!"}), 403
                 else:

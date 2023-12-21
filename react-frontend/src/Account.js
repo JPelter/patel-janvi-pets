@@ -1,7 +1,9 @@
 import React from 'react';
 import axios from 'axios';
+
 import { Paper, TextField, Button } from '@mui/material';
 
+axios.defaults.withCredentials = true;
 function UnauthenticatedComponent() {
     const [email, setEmail] = React.useState('');
     const [token, setToken] = React.useState('');
