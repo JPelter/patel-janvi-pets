@@ -83,11 +83,15 @@ function UnauthenticatedComponent() {
 }
 
 function AuthenticatedComponent() {
-    // Component for authenticated user - Profile Page
     return (
-        <div>
-            <p>Welcome to your profile page!</p>
-            {/* Display authenticated user's profile information */}
+        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+            <div style={{ flex: '1', overflow: 'auto' }}>
+                <p>Welcome to your profile page!</p>
+                {/* Display authenticated user's profile information */}
+            </div>
+            <div style={{ marginTop: 'auto' }}>
+                <p style={{ textAlign: 'center' }}>Logout</p>
+            </div>
         </div>
     );
 }
@@ -99,7 +103,7 @@ function ACCOUNT(props) {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        height: '100vh', // Adjust this value based on your layout
+        height: '90vh'
     };
 
     return (
