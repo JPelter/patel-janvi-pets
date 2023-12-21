@@ -69,7 +69,6 @@ metadata:
     kubernetes.io/ingress.class: nginx
     cert-manager.io/cluster-issuer: letsencrypt
     nginx.ingress.kubernetes.io/limit-rpm: {{ .Values.rpm | quote }}
-    nginx.ingress.kubernetes.io/enable-cors: "true"
 spec:
   tls:
   - hosts:

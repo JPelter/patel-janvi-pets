@@ -19,10 +19,14 @@ from flask import Flask, session
 #### INT AND COMMON OBJECTS ####
 ################################
 app = Flask(__name__)
-CORS(app, supports_credentials=True) # REMOVE BEFORE PROD LAUNCH? OR WHO CARES?
+app.logger.setLevel(logging.INFO) # TWO LOGGERS :?
+if environ['POSTGRES_HOST'].startswith("localhost"): # ON LOCAL, 
+    CORS(app, supports_credentials=True) # IF RUNNING API AND FRONTEND REACT, DIFFERENT PORT IS CORS!
+    app.logger.setLevel(logging.DEBUG)
+
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = environ['FLASK_SECRET']
-app.logger.setLevel(logging.DEBUG) # TWO LOGGERS :?
+
 db = SQLAlchemy()
 app.config["SQLALCHEMY_DATABASE_URI"] = f"postgresql://postgres:{environ['POSTGRES_PASSWORD']}@{environ['POSTGRES_HOST']}"
 
