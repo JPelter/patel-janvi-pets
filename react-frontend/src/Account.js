@@ -1,19 +1,24 @@
 import React from 'react';
 import axios from 'axios';
 
-import { Paper, TextField, Button } from '@mui/material';
+import { Paper, TextField, Button, Stack } from '@mui/material';
+
 
 axios.defaults.withCredentials = true;
+
 function UnauthenticatedComponent(props) {
     const [email, setEmail] = React.useState('');
     const [token, setToken] = React.useState('');
     const [emailSubmitted, setEmailSubmitted] = React.useState(false);
+    const [tokenSubmitted, setTokenSubmitted] = React.useState(false);
+    const [resetPanel, setResetPanel] = React.useState(false); // State to control the reset panel
 
     const handleSubmitEmail = async (e) => {
+        setEmailSubmitted(true);
         e.preventDefault();
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_TOKEN_EMAIL}`, {
-                email: email // Assign email to the 'email' key in the data object
+                email: email
             }, {
                 headers: {
                     'Content-Type': 'application/json'
@@ -23,14 +28,14 @@ function UnauthenticatedComponent(props) {
         } catch (error) {
             console.error('Error sending token email request:', error);
         }
-        setEmailSubmitted(true); // Show token input after email submission
     };
 
     const handleSubmitToken = async (e) => {
+        setTokenSubmitted(true);
         e.preventDefault();
         try {
             const response = await axios.post(`${process.env.REACT_APP_API_TOKEN_EXCHANGE}`, {
-                email: email, // Assign email to the 'email' key in the data object
+                email: email,
                 login_token: token
             }, {
                 headers: {
@@ -40,29 +45,39 @@ function UnauthenticatedComponent(props) {
             console.log('Token exchanged for session cookie:', response.data);
             props.setAuthenticated(true);
         } catch (error) {
-            console.error('Error sending token email request:', error);
+            console.error('Error exchanging token for session cookie:', error);
         }
+    };
+
+    const handleReset = () => {
+        setEmail('');
+        setToken('');
+        setEmailSubmitted(false);
+        setTokenSubmitted(false);
+        setResetPanel(false);
     };
 
     return (
         <div style={{ textAlign: 'center' }}>
-            <Paper elevation={3} style={{ padding: '20px', margin: '20px', maxWidth: '300px'}}>
-                <form onSubmit={handleSubmitEmail}>
-                    <TextField
-                        type="email"
-                        label="Enter your email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        fullWidth
-                        margin="normal"
-                        variant="outlined"
-                    />
-                    <Button type="submit" variant="contained" color="primary">
-                        Request New Token!
-                    </Button>
-                </form>
+            <Paper elevation={3} style={{ padding: '20px', margin: '20px', width: "300px", height:"200px"}} component={Stack} direction="column" justifyContent="center">
+                {!emailSubmitted && (
+                    <form onSubmit={handleSubmitEmail}>
+                        <TextField
+                            type="email"
+                            label="Enter your email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            fullWidth
+                            margin="normal"
+                            variant="outlined"
+                        />
+                        <Button type="submit" variant="contained" color="primary">
+                            Request New Token!
+                        </Button>
+                    </form>
+                )}
 
-                {emailSubmitted && (
+                {emailSubmitted && !tokenSubmitted && (
                     <form onSubmit={handleSubmitToken}>
                         <TextField
                             type="text"
@@ -77,6 +92,14 @@ function UnauthenticatedComponent(props) {
                             Submit Login Token!
                         </Button>
                     </form>
+                )}
+
+                {tokenSubmitted && !props.authenticated && (
+                    <div>
+                        <Button onClick={handleReset} variant="contained" color="secondary">
+                            Reset!
+                        </Button>
+                    </div>
                 )}
             </Paper>
         </div>
