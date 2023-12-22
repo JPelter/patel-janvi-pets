@@ -34,17 +34,19 @@ function App() {
   return (
     <Router>
       <NavBar authenticated={authenticated}/>
-      <Routes>
-        <Route path="/" exact="true" element={<Home/>} /> f
-        <Route path="/services" element={<Services/>} />
-        <Route path="/account" element={<Account authenticated={authenticated} setAuthenticated={setAuthenticated}/>} />
-        {authenticated && (
-          <>
-            <Route path="/appointments" element={<Appointments/>} />
-            <Route path="/chat" element={<Chat/>} />
-          </>
-        )}
-      </Routes>
+      <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+        <Routes>
+          <Route path="/" exact="true" element={<Home/>} /> f
+          <Route path="/services" element={<Services/>} />
+          <Route path="/account" element={<Account authenticated={authenticated} setAuthenticated={setAuthenticated}/>} />
+          {authenticated && (
+            <>
+              <Route path="/appointments" element={<Appointments/>} />
+              <Route path="/chat" element={<Chat/>} />
+            </>
+          )}
+        </Routes>
+      </div>
     </Router>
   );
 }

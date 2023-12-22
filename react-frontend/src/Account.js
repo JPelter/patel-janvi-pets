@@ -11,7 +11,6 @@ function UnauthenticatedComponent(props) {
     const [token, setToken] = React.useState('');
     const [emailSubmitted, setEmailSubmitted] = React.useState(false);
     const [tokenSubmitted, setTokenSubmitted] = React.useState(false);
-    const [resetPanel, setResetPanel] = React.useState(false); // State to control the reset panel
 
     const handleSubmitEmail = async (e) => {
         setEmailSubmitted(true);
@@ -47,14 +46,6 @@ function UnauthenticatedComponent(props) {
         } catch (error) {
             console.error('Error exchanging token for session cookie:', error);
         }
-    };
-
-    const handleReset = () => {
-        setEmail('');
-        setToken('');
-        setEmailSubmitted(false);
-        setTokenSubmitted(false);
-        setResetPanel(false);
     };
 
     return (
@@ -96,9 +87,7 @@ function UnauthenticatedComponent(props) {
 
                 {tokenSubmitted && !props.authenticated && (
                     <div>
-                        <Button onClick={handleReset} variant="contained" color="secondary">
-                            Reset!
-                        </Button>
+                        <p>Try refreshing if something went wrong...</p>
                     </div>
                 )}
             </Paper>
@@ -138,16 +127,10 @@ function AuthenticatedComponent(props) {
 function ACCOUNT(props) {
     const { authenticated, setAuthenticated } = props;
 
-    const componentStyle = {
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-    };
-
     return (
-        <div style={componentStyle}>
+        <>
             {authenticated ? <AuthenticatedComponent authenticated={authenticated} setAuthenticated={setAuthenticated} /> : <UnauthenticatedComponent authenticated={authenticated} setAuthenticated={setAuthenticated} />}
-        </div>
+        </>
     );
 }
 
