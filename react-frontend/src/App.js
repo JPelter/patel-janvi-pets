@@ -37,7 +37,7 @@ function App() {
       <Routes>
         <Route path="/" exact="true" element={<Home/>} /> f
         <Route path="/services" element={<Services/>} />
-        <Route path="/account" element={<Account authenticated={authenticated}/>} />
+        <Route path="/account" element={<Account authenticated={authenticated} setAuthenticated={setAuthenticated}/>} />
         {authenticated && (
           <>
             <Route path="/appointments" element={<Appointments/>} />

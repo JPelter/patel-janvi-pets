@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Paper, TextField, Button } from '@mui/material';
 
 axios.defaults.withCredentials = true;
-function UnauthenticatedComponent() {
+function UnauthenticatedComponent(props) {
     const [email, setEmail] = React.useState('');
     const [token, setToken] = React.useState('');
     const [emailSubmitted, setEmailSubmitted] = React.useState(false);
@@ -38,6 +38,7 @@ function UnauthenticatedComponent() {
                 }
             });
             console.log('Token exchanged for session cookie:', response.data);
+            props.setAuthenticated(true);
         } catch (error) {
             console.error('Error sending token email request:', error);
         }
@@ -82,33 +83,47 @@ function UnauthenticatedComponent() {
     );
 }
 
-function AuthenticatedComponent() {
+function AuthenticatedComponent(props) {
+    const handleLogout = async () => {
+      try {
+        // Make your axios API call for logout here
+        const response = await axios.get(`${process.env.REACT_APP_API_LOGOUT}`);
+        console.log('Logout API call:', response.data);
+        props.setAuthenticated(false);
+      } catch (error) {
+        console.error('Error logging out:', error);
+        // TODO: delete cookie with client manually?
+      }
+    };
+  
     return (
-        <div style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
-            <div style={{ flex: '1', overflow: 'auto' }}>
-                <p>Welcome to your profile page!</p>
-                {/* Display authenticated user's profile information */}
-            </div>
-            <div style={{ marginTop: 'auto' }}>
-                <p style={{ textAlign: 'center' }}>Logout</p>
-            </div>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <div style={{ flex: '1', overflow: 'auto' }}>
+          <p>Welcome to your profile page!</p>
+          {/* Display authenticated user's profile information */}
         </div>
+        <div style={{ marginTop: '250px', textAlign: 'center' }}>
+          {/* MUI Button for Logout */}
+          <Button onClick={handleLogout} variant="contained">
+            Logout
+          </Button>
+        </div>
+      </div>
     );
-}
+  }
 
 function ACCOUNT(props) {
-    const { authenticated } = props;
+    const { authenticated, setAuthenticated } = props;
 
     const componentStyle = {
         display: 'flex',
         justifyContent: 'center',
-        alignItems: 'center',
-        height: '90vh'
+        alignItems: 'center'
     };
 
     return (
         <div style={componentStyle}>
-            {authenticated ? <AuthenticatedComponent /> : <UnauthenticatedComponent />}
+            {authenticated ? <AuthenticatedComponent authenticated={authenticated} setAuthenticated={setAuthenticated} /> : <UnauthenticatedComponent authenticated={authenticated} setAuthenticated={setAuthenticated} />}
         </div>
     );
 }
