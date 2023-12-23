@@ -11,4 +11,12 @@
         />
     </changeSet>
 
+    <changeSet id="1" author="JakePelter">
+        <sqlFile
+            path="scripts/001-appointments-basic.sql"
+            relativeToChangelogFile="true"
+            endDelimiter=";"
+        />
+    </changeSet>
+
 </databaseChangeLog>

@@ -4,7 +4,6 @@ import NavBar from './NavBar';
 import Home from './Home';
 import Services from './Services';
 import Appointments from './Appointments';
-import Chat from './Chat';
 import Account from './Account';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
@@ -42,7 +41,6 @@ function App() {
           {authenticated && (
             <>
               <Route path="/appointments" element={<Appointments/>} />
-              <Route path="/chat" element={<Chat/>} />
             </>
           )}
         </Routes>
