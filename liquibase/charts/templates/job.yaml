@@ -1,0 +1,27 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ printf "%s-%s" .Release.Name (now | date "20060102-150405") | trunc 63 | quote }}
+spec:
+  template:
+    metadata:
+      name: {{ .Release.Name }}
+    spec:
+      imagePullSecrets:
+      - name: {{ .Values.imagePullSecret }}
+      restartPolicy: Never
+      containers:
+        - name: {{ .Release.Name }}
+          image: docker.io/jakepelter/pets-liquibase:{{ .Values.imageTag }}
+          command: ["liquibase", "update", "--changeLogFile=changelog.xml", "--url={{ .Values.postgresURL }}"]
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: LIQUIBASE_COMMAND_USERNAME
+            value: postgres
+          - name: LIQUIBASE_COMMAND_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Values.postgresSecret }}
+                key: db-admin-pw
+  completions: 1
+  backoffLimit: 1

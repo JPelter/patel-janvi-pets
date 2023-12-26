@@ -5,4 +5,4 @@ imagePullSecret: jakep-dockerhub
 
 port: 80
 rpm: 5
-hostname: pets-dev.pelter.net
+hostname: pets.pelter.net

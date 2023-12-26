@@ -1,0 +1,5 @@
+imageTag:
+imagePullSecret: jakep-dockerhub
+
+postgresURL: jdbc:postgresql://storage-dev.pets.svc.cluster.local:5432/postgres
+postgresSecret: storage-dev-creds

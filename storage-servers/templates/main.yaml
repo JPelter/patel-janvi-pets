@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: {{ .Release.Name }}
+  labels:
+    name: {{ .Release.Name }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      name: {{ .Release.Name }}
+  serviceName: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        name: {{ .Release.Name }}
+    spec:
+      securityContext:
+        fsGroup: 2000
+      containers:
+        - name: {{ .Release.Name }}-db
+          image: postgres:16.0
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: {{ .Values.postgres.port }}
+          volumeMounts:
+          - name: data
+            subPath: pg_mount
+            mountPath: var/lib/postgresql/data
+          resources:
+            limits:
+              memory: {{ .Values.postgres.memory }}
+              cpu: {{ .Values.postgres.cpu }}
+          env:
+          - name: PGDATA
+            value: var/lib/postgresql/data/pgdata
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: {{ .Release.Name }}-creds
+                key: db-admin-pw
+        - name: minio
+          image: minio/minio:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+          - containerPort: {{ .Values.minio.apiPort }}
+          - containerPort: {{ .Values.minio.consolePort }}
+          env:
+            - name: MINIO_ROOT_USER
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-creds
+                  key: minio-root-user
+            - name: MINIO_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-creds
+                  key: minio-root-pass
+            - name: MINIO_CONSOLE_ADDRESS
+              value: ":{{ .Values.minio.consolePort }}"
+          volumeMounts:
+            - name: data
+              subPath: minio_mount
+              mountPath: /pvc
+          command:
+          - sh
+          - -c
+          - minio server /pvc
+      restartPolicy: Always
+  volumeClaimTemplates:
+  - metadata:
+      name: data
+    spec:
+      accessModes: 
+        - "ReadWriteOnce"
+      resources:
+        requests:
+          storage: {{ .Values.storage }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}
+spec:
+  type: ClusterIP
+  ports:
+  - name: db-service
+    port: {{ .Values.postgres.port }}
+    targetPort: {{ .Values.postgres.port }}
+  - name: api-service
+    port: {{ .Values.minio.apiPort }}
+    targetPort: {{ .Values.minio.apiPort }}
+    protocol: TCP
+  - name: console-service
+    port: {{ .Values.minio.consolePort }}
+    targetPort: {{ .Values.minio.consolePort }}
+    protocol: TCP
+  selector:
+    name: {{ .Release.Name }}

@@ -1,0 +1,36 @@
+trigger:
+  batch: true
+  branches:
+    include:
+    - feature/*
+    - main
+  paths:
+    include:
+    - python-flask-api
+#
+schedules:
+- cron: 0 8 * * * # DAILY BUILD 8AM UTC => 3AM EST/4AM EDT
+  branches:
+    include:
+    - feature/*
+    - main
+  always: true
+
+jobs:
+- job: BuildAndPush
+  displayName: Docker build and push
+  pool:
+    name: Azure Pipelines
+  steps:
+  - task: Docker@2
+    displayName: BuildAndPush
+    inputs:
+      command: buildAndPush
+      repository: jakepelter/patel-pets-api
+      dockerfile: python-flask-api/Dockerfile
+      containerRegistry: 'jakep-dockerhub'
+      tags: $(Build.BuildId)
+  - task: PublishBuildArtifacts@1
+    inputs:
+      pathToPublish: python-flask-api/charts
+      artifactName: 'drop'

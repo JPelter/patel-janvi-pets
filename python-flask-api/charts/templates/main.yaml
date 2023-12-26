@@ -19,6 +19,35 @@ spec:
         image: {{ .Values.image }}:{{ .Values.imageTag }}
         ports:
         - containerPort: {{ .Values.port }}
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        - name: POSTGRES_HOST
+          value: {{ .Values.postgresURL }}
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.postgresSecret }}
+              key: db-admin-pw
+        - name: EMAIL_ACCOUNT
+          valueFrom:
+            secretKeyRef:
+              name: email-creds
+              key: username
+        - name: EMAIL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: email-creds
+              key: password
+        - name: SENDER_EMAIL
+          value: {{ .Values.senderEmail }}
+        - name: SMTP_RELAY
+          value: {{ .Values.smtpRelay }}
+        - name: FLASK_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: {{ .Values.flaskSecret }}
+              key: secret
 ---
 apiVersion: v1
 kind: Service
@@ -50,7 +79,7 @@ spec:
     http:
       paths:
       - pathType: Prefix
-        path: "/"
+        path: "/api"
         backend:
           service:
             name: {{ .Release.Name }}
