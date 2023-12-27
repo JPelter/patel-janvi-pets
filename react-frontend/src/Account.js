@@ -50,7 +50,7 @@ function UnauthenticatedComponent(props) {
 
     return (
         <div style={{ textAlign: 'center' }}>
-            <Paper elevation={3} style={{ padding: '20px', margin: '20px', width: "300px", height:"200px"}} component={Stack} direction="column" justifyContent="center">
+            <Paper elevation={3} style={{ padding: '20px', margin: '20px'}} component={Stack} direction="column" justifyContent="center">
                 {!emailSubmitted && (
                     <form onSubmit={handleSubmitEmail}>
                         <TextField
@@ -63,7 +63,7 @@ function UnauthenticatedComponent(props) {
                             variant="outlined"
                         />
                         <Button type="submit" variant="contained" color="primary">
-                            Request New Token!
+                            Request login token!
                         </Button>
                     </form>
                 )}
@@ -80,7 +80,7 @@ function UnauthenticatedComponent(props) {
                             variant="outlined"
                         />
                         <Button type="submit" variant="contained" color="primary">
-                            Submit Login Token!
+                            Login with token!
                         </Button>
                     </form>
                 )}
@@ -93,6 +93,14 @@ function UnauthenticatedComponent(props) {
             </Paper>
         </div>
     );
+}
+
+function AdminComponent() {
+    return (
+        <div style={{ marginTop: '50px', textAlign: 'center' }}>
+            <p>You are an admin!</p>
+        </div>
+      );
 }
 
 function AuthenticatedComponent(props) {
@@ -114,22 +122,26 @@ function AuthenticatedComponent(props) {
           <p>Welcome to your profile page!</p>
           {/* Display authenticated user's profile information */}
         </div>
-        <div style={{ marginTop: '250px', textAlign: 'center' }}>
+        <div style={{ marginTop: '50px', textAlign: 'center' }}>
           {/* MUI Button for Logout */}
           <Button onClick={handleLogout} variant="contained">
             Logout
           </Button>
         </div>
+        { props.admin && (
+            <AdminComponent/>
+        )}
+
       </div>
     );
   }
 
 function ACCOUNT(props) {
-    const { authenticated, setAuthenticated } = props;
+    const { authenticated, setAuthenticated, admin } = props;
 
     return (
         <>
-            {authenticated ? <AuthenticatedComponent authenticated={authenticated} setAuthenticated={setAuthenticated} /> : <UnauthenticatedComponent authenticated={authenticated} setAuthenticated={setAuthenticated} />}
+            {authenticated ? <AuthenticatedComponent authenticated={authenticated} setAuthenticated={setAuthenticated} admin={admin} /> : <UnauthenticatedComponent authenticated={authenticated} setAuthenticated={setAuthenticated} />}
         </>
     );
 }

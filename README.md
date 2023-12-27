@@ -15,7 +15,8 @@ Multi-stage docker build with node then nginx.
 | PROD | http://pets-website.pets.svc.cluster.local:80 | https://pets.mtcloud.pelter.net/ |
 
 # Python Flask API
-Notice that the internet URL matches the frontend client, the path /api is present for all API endpoints.
+Notice that the internet URL matches the frontend client, the path /api is present for all API endpoints. When running this locally, environment variables must be provided some way.
+
 | Environment | Cluster Host | External Host |
 | ----------- | ----------- | ----------- |
 | LOCAL | N/A | http://localhost:8080 |

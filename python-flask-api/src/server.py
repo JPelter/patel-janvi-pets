@@ -35,6 +35,8 @@ db_Base = automap_base()
 db_Base.prepare(db_engine)
 
 ACCOUNT = db_Base.classes.account
+APPOINTMENT_REQUEST = db_Base.classes.appointment_request
+APPOINTMENT = db_Base.classes.appointment
 
 ##################################
 ##### IMPORTED SERVER ROUTES #####
