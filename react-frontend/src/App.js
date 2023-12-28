@@ -32,7 +32,7 @@ function App() {
   useEffect(() => {
     async function checkAdmin() {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_AUTHCHECK}`, {}, {
+        const response = await axios.get(`${process.env.REACT_APP_API_ADMINCHECK}`, {}, {
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -40,7 +40,7 @@ function App() {
         setAdmin(true);
         console.log('Admin confirmed:', response.data);
       } catch (error) {
-          console.error('Error checking auth:', error);
+          console.error('Error checking admin:', error);
       }
     }
     checkAdmin();

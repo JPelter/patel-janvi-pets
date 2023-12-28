@@ -7,22 +7,54 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 function AdminAccordion() {
-    return (
-    <Accordion elevation={3} disabled style={{ maxWidth: '100%', marginLeft: '20px', marginRight: '20px' }}>
-        <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        aria-controls="panel2a-content"
-        id="panel2a-header"
-        >
-        <Typography>Administer Appointments</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-        <Typography>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-            malesuada lacus ex, sit amet blandit leo lobortis eget.
-        </Typography>
-        </AccordionDetails>
-    </Accordion>
+    return ( 
+        <>
+            <Accordion elevation={3} style={{ maxWidth: '100%', marginTop: "20px", marginLeft: '20px', marginRight: '20px', borderTopLeftRadius: '4px', borderTopRightRadius: '4px' }}>
+                <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel1a-content"
+                id="panel1a-header"
+                >
+                <Typography>Administer Requests</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                <Typography>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+                    malesuada lacus ex, sit amet blandit leo lobortis eget.
+                </Typography>
+                </AccordionDetails>
+            </Accordion>
+            <Accordion elevation={3} style={{ maxWidth: '100%', marginLeft: '20px', marginRight: '20px' }}>
+                <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel2a-content"
+                id="panel2a-header"
+                >
+                <Typography>Upcoming Appointments</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                <Typography>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+                    malesuada lacus ex, sit amet blandit leo lobortis eget.
+                </Typography>
+                </AccordionDetails>
+            </Accordion>
+            <Accordion square={false} elevation={3} style={{ maxWidth: '100%', marginLeft: '20px', marginRight: '20px', borderBottomLeftRadius: '4px', borderBottomRightRadius: '4px' }}>
+                <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls="panel3a-content"
+                id="panel3a-header"
+                >
+                <Typography>Old Appointments</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                <Typography>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+                    malesuada lacus ex, sit amet blandit leo lobortis eget.
+                </Typography>
+                </AccordionDetails>
+            </Accordion>
+        </>
     );
 }
 
@@ -69,14 +101,8 @@ function Appointments(props) {
                 >
                 <Typography>Accordion 2</Typography>
                 </AccordionSummary>
-                <AccordionDetails>
-                <Typography>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                    malesuada lacus ex, sit amet blandit leo lobortis eget.
-                </Typography>
-                </AccordionDetails>
             </Accordion>
-            <Accordion square={false} elevation={3} style={{ maxWidth: '100%', marginLeft: '20px', marginRight: '20px', borderBottomLeftRadius: '4px', borderBottomRightRadius: '4px' }}>
+            <Accordion square={false} elevation={3} style={{ maxWidth: '100%', marginBottom: "20px", marginLeft: '20px', marginRight: '20px', borderBottomLeftRadius: '4px', borderBottomRightRadius: '4px' }}>
                 <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel3a-content"
@@ -84,7 +110,15 @@ function Appointments(props) {
                 >
                 <Typography>f Accordion</Typography>
                 </AccordionSummary>
+                <AccordionDetails>
+                <Typography>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+                    malesuada lacus ex, sit amet blandit leo lobortis eget.
+                </Typography>
+                </AccordionDetails>
             </Accordion>
+
+            {admin && (<AdminAccordion/>)}
         </div>
     );
 }

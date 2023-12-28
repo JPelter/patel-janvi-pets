@@ -84,7 +84,7 @@ def login_required(admin_endpoint=False):
         def wrapper(*args, **kwargs):
             if session.get('email'):
                 req_acct = db.session.query(ACCOUNT).filter(ACCOUNT.email == session["email"]).first()
-                if admin_endpoint == "admin" and not req_acct.admin_account:
+                if admin_endpoint and not req_acct.admin_account:
                     return jsonify({"message":"Not authorized sorry!"}), 403
                 else:
                     return function_to_protect(*args, **kwargs)

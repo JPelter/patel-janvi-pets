@@ -60,6 +60,7 @@ if __name__ == '__main__':
     @app.route("/api/admincheck", methods=['GET'])
     @login_required(admin_endpoint=True) # EXAMPLE OF HOW TO MAKE ADMIN ENDPOINT!
     def admincheck_endpoint():
+        app.logger.info(f"Admincheck by: {session['email']}")
         return jsonify({"message":"Admin!", "email":session['email'], "session_start":session['creation_time']})
 
     db.init_app(app)

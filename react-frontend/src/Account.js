@@ -104,6 +104,7 @@ function AdminComponent() {
 }
 
 function AuthenticatedComponent(props) {
+    console.log(props.admin)
     const handleLogout = async () => {
       try {
         // Make your axios API call for logout here
@@ -128,10 +129,9 @@ function AuthenticatedComponent(props) {
             Logout
           </Button>
         </div>
-        { props.admin && (
+        {props.admin && (
             <AdminComponent/>
         )}
-
       </div>
     );
   }
