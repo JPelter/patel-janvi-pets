@@ -51,12 +51,12 @@ function App() {
       <NavBar authenticated={authenticated}/>
       <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
         <Routes>
-          <Route path="/" exact="true" element={<Home authenticated={authenticated} setAuthenticated={setAuthenticated} admin={admin}/>} />
-          <Route path="/services" element={<Services authenticated={authenticated} setAuthenticated={setAuthenticated} admin={admin}/>} />
+          <Route path="/" exact="true" element={<Home authenticated={authenticated} admin={admin}/>} />
+          <Route path="/services" element={<Services authenticated={authenticated} admin={admin}/>} />
           <Route path="/account" element={<Account authenticated={authenticated} setAuthenticated={setAuthenticated} admin={admin}/>} />
           {authenticated && (
             <>
-              <Route path="/appointments" element={<Appointments authenticated={authenticated} setAuthenticated={setAuthenticated} admin={admin}/>} />
+              <Route path="/appointments" element={<Appointments admin={admin}/>} />
             </>
           )}
         </Routes>

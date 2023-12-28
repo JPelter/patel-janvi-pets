@@ -136,7 +136,7 @@ function AuthenticatedComponent(props) {
     );
   }
 
-function ACCOUNT(props) {
+function Account(props) {
     const { authenticated, setAuthenticated, admin } = props;
 
     return (
@@ -146,4 +146,4 @@ function ACCOUNT(props) {
     );
 }
 
-export default ACCOUNT;
+export default Account;
