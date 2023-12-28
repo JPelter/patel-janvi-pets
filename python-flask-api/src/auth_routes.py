@@ -64,6 +64,7 @@ def token_post_endpoint():
     if datetime.now(timezone.utc) < req_acct.request_time + timedelta(minutes=login_token_minutes) and req_acct.login_token == request.get_json()["login_token"]:
         session['email'] = request.get_json()["email"]
         session['creation_time'] = datetime.now(timezone.utc)
+        session['user_uuid'] = req_acct.uuid
         req_acct.last_successful_login = session['creation_time']
         app.logger.info(f"Created session cookie for: {request.get_json()['email']}")
         return jsonify({"message":"Token exchanged for authenticating session cookie!", "email":request.get_json()["email"]})
@@ -78,10 +79,10 @@ def logout_endpoint():
     return jsonify({"message":"Session cookie cleared!"})
 
 def login_required(admin_endpoint=False):
-    app.logger.debug(f"login_required API call")
     def decorator(function_to_protect):
         @wraps(function_to_protect)
         def wrapper(*args, **kwargs):
+            app.logger.debug(f"login_required API call")
             if session.get('email'):
                 req_acct = db.session.query(ACCOUNT).filter(ACCOUNT.email == session["email"]).first()
                 if admin_endpoint and not req_acct.admin_account:

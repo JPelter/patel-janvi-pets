@@ -67,17 +67,6 @@ function Appointments(props) {
                 <Typography variant="h3" sx={{ fontFamily: 'Dancing Script'}}>Appointments!</Typography>
             </Paper>
 
-            <Paper elevation={3} style={{ padding: '20px', margin: '20px'}} component={Stack} direction="column" justifyContent="center">
-                <Typography sx={{ margin: '5px', fontFamily: 'Verdana', fontSize: '1.1rem', color: '#555', fontStyle: 'italic' }}>
-                    Enjoy the photos and videos below!
-                </Typography>
-                <Typography sx={{ margin: '5px', fontFamily: 'Verdana', fontSize: '1.1rem', color: '#555', fontStyle: 'italic' }}>
-                    Check the <Link component={RouterLink} to="/services" underline="hover" sx={{ color: '#009688', fontWeight: 'bold' }}>services</Link> page for a list of offerings and prices!
-                </Typography>
-                <Typography sx={{ margin: '5px', fontFamily: 'Verdana', fontSize: '1.1rem', color: '#555', fontStyle: 'italic' }}>
-                    Or <Link component={RouterLink} to="/account" underline="hover" sx={{ color: '#009688', fontWeight: 'bold' }}>register/login</Link> to chat and request an appointment!
-                </Typography>
-            </Paper>
             <Accordion elevation={3} style={{ maxWidth: '100%', marginLeft: '20px', marginRight: '20px', borderTopLeftRadius: '4px', borderTopRightRadius: '4px' }}>
                 <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
