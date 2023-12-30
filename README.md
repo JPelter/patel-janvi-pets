@@ -1,4 +1,4 @@
-# patel-janvi-pets
+# Pet Service Storefront
 A website to display information about pet service offerings as well as provide an interface for customers to chat and book appointments.
 
 # Introduction
