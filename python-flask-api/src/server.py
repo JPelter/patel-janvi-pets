@@ -54,13 +54,13 @@ if __name__ == '__main__':
     @app.route("/api/authcheck", methods=['GET'])
     @login_required(admin_endpoint=False) # EXAMPLE OF HOW TO USE THE LOGIN REQUIRED DECOCATOR! OPTIONAL ARGUMENT, DEFAULT IS False!
     def authcheck_endpoint():
-        app.logger.info(f"Authcheck by: {session['email']}")
+        app.logger.info(f"Authcheck by: {session['email']}|{session['user_uuid']}")
         return jsonify({"message":"Authenticated!", "email":session['email'], "session_start":session['creation_time']})
         
     @app.route("/api/admincheck", methods=['GET'])
     @login_required(admin_endpoint=True) # EXAMPLE OF HOW TO MAKE ADMIN ENDPOINT!
     def admincheck_endpoint():
-        app.logger.info(f"Admincheck by: {session['email']}")
+        app.logger.info(f"Admincheck by:  {session['email']}|{session['user_uuid']}")
         return jsonify({"message":"Admin!", "email":session['email'], "session_start":session['creation_time']})
 
     db.init_app(app)
