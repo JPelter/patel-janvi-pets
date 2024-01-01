@@ -3,16 +3,14 @@ import logging
 from os import environ
 
 # EXT
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
 from waitress import serve
 
-from sqlalchemy import and_, asc, create_engine, inspect, or_
+from sqlalchemy import create_engine
 from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.orm import Session
-from sqlalchemy.sql.expression import func
 
 from flask import Flask, session
 ################################
@@ -38,10 +36,27 @@ ACCOUNT = db_Base.classes.account
 APPOINTMENT_REQUEST = db_Base.classes.appointment_request
 APPOINTMENT = db_Base.classes.appointment
 
+def login_required(admin_endpoint=False):
+    def decorator(function_to_protect):
+        @wraps(function_to_protect)
+        def wrapper(*args, **kwargs):
+            app.logger.debug(f"login_required API call")
+            if session.get('email'):
+                req_acct = db.session.query(ACCOUNT).filter(ACCOUNT.email == session["email"]).first()
+                if admin_endpoint and not req_acct.admin_account:
+                    return jsonify({"message":"Not authorized sorry!"}), 403
+                else:
+                    return function_to_protect(*args, **kwargs)
+            else:
+                return jsonify({"message":"Try logging in!"}), 401
+        return wrapper
+    return decorator
+
 ##################################
 ##### IMPORTED SERVER ROUTES #####
 ##################################
 from auth_routes import *
+from appointment_routes import *
 
 ########################
 ###### STARTUP!!! ######

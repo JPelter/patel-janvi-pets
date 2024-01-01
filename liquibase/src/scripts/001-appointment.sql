@@ -9,7 +9,7 @@ CREATE TABLE APPOINTMENT_REQUEST (
     request_note VARCHAR(1000),
 
     recurring_weekly BOOLEAN DEFAULT FALSE,
-    recurring_enddate TIMESTAMPTZ NOT NULL,
+    recurring_enddate TIMESTAMPTZ,
 
     request_accepted BOOLEAN,
     admin_uuid CHAR(60) REFERENCES ACCOUNT(uuid)
