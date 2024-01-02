@@ -16,7 +16,16 @@ from server import app, db, login_required, ACCOUNT, APPOINTMENT_REQUEST, APPOIN
 @app.route("/api/request-appointment", methods=['POST'])
 @login_required()
 def create_request():
-
+    req_acct = db.session.query(ACCOUNT).get(session['user_uuid'])
+    # appt_req = APPOINTMENT_REQUEST(customer_uuid=req_acct.uuid, window_start=request.get_json()['window_start'], window_end=request.get_json()['window_end'],
+    #                     service_requested=request.get_json()['service_requested'])
+    # ADD OPTIONAL FIELDS IF PRESENT!
+    if 'request_note' in request.get_json():
+        pass
+    if 'recurring_weekly' in request.get_json():
+        pass
+    if 'recurring_enddate' in request.get_json():
+        pass
     return jsonify({"message":"todo"})
 
 @app.route("/api/request-appointment", methods=['GET'])
@@ -49,7 +58,7 @@ def get_appointment():
 
 @app.route("/api/appointment", methods=['DELETE'])
 @login_required()
-def get_appointment():
+def cancel_appointment():
 
     return jsonify({"message":"todo"})
 

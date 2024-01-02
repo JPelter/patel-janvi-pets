@@ -21,8 +21,8 @@ app.logger.setLevel(logging.INFO) # TWO LOGGERS :?
 if environ['POSTGRES_HOST'].startswith("localhost"): # ON LOCAL, 
     CORS(app, supports_credentials=True) # IF RUNNING API AND FRONTEND REACT, DIFFERENT PORT IS CORS!
     app.logger.setLevel(logging.DEBUG)
+    app.config['CORS_HEADERS'] = 'Content-Type'
 
-app.config['CORS_HEADERS'] = 'Content-Type'
 app.secret_key = environ['FLASK_SECRET']
 
 db = SQLAlchemy()
@@ -41,8 +41,9 @@ def login_required(admin_endpoint=False):
         @wraps(function_to_protect)
         def wrapper(*args, **kwargs):
             app.logger.debug(f"login_required API call")
-            if session.get('email'):
-                req_acct = db.session.query(ACCOUNT).filter(ACCOUNT.email == session["email"]).first()
+            if session.get('user_uuid'):
+                req_acct = db.session.query(ACCOUNT).get(session['user_uuid'])
+                # TODO: what if req_acct doesnt exist? but this case is quite rare...
                 if admin_endpoint and not req_acct.admin_account:
                     return jsonify({"message":"Not authorized sorry!"}), 403
                 else:
