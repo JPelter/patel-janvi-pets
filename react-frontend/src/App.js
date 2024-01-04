@@ -10,8 +10,9 @@ axios.defaults.withCredentials = true;
 
 function App() {
   const [authenticated, setAuthenticated ] = useState(false);
-  // const [width, height] = [window.screen.width, window.screen.height];
-  // const isMobile = Math.min(width, height) < 768;
+
+  const [admin, setAdmin ] = useState(false);
+
 
   useEffect(() => {
     async function checkAuth() {
@@ -30,17 +31,38 @@ function App() {
     checkAuth();
   }, []);
 
+
+  useEffect(() => {
+    async function checkAdmin() {
+      try {
+        const response = await axios.get(`${process.env.REACT_APP_API_ADMINCHECK}`, {}, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        setAdmin(true);
+        console.log('Admin confirmed:', response.data);
+      } catch (error) {
+          console.error('Error checking admin:', error);
+      }
+    }
+    checkAdmin();
+  }, []);
+
+
   return (
     <Router>
       <NavBar authenticated={authenticated}/>
       <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
         <Routes>
-          <Route path="/" exact="true" element={<Home/>} /> f
-          <Route path="/services" element={<Services/>} />
-          <Route path="/account" element={<Account authenticated={authenticated} setAuthenticated={setAuthenticated}/>} />
+
+          <Route path="/" exact="true" element={<Home authenticated={authenticated} admin={admin}/>} />
+          <Route path="/services" element={<Services authenticated={authenticated} admin={admin}/>} />
+          <Route path="/account" element={<Account authenticated={authenticated} setAuthenticated={setAuthenticated} admin={admin}/>} />
           {authenticated && (
             <>
-              <Route path="/appointments" element={<Appointments/>} />
+              <Route path="/appointments" element={<Appointments admin={admin}/>} />
+
             </>
           )}
         </Routes>

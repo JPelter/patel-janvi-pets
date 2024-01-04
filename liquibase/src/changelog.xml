@@ -5,7 +5,9 @@
 
     <changeSet id="1" author="JakePelter">
         <sqlFile
-            path="scripts/000-account-basic.sql"
+
+            path="scripts/000-account.sql"
+
             relativeToChangelogFile="true"
             endDelimiter=";"
         />
@@ -13,7 +15,9 @@
 
     <changeSet id="2" author="JakePelter">
         <sqlFile
-            path="scripts/001-appointments-basic.sql"
+
+            path="scripts/001-appointment.sql"
+
             relativeToChangelogFile="true"
             endDelimiter=";"
         />

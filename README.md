@@ -1,4 +1,4 @@
-# patel-janvi-pets
+# Pet Service Storefront
 A website to display information about pet service offerings as well as provide an interface for customers to chat and book appointments.
 
 # Introduction
@@ -11,16 +11,18 @@ Multi-stage docker build with node then nginx.
 | Environment | Cluster Host | Internet Host |
 | ----------- | ----------- | ----------- |
 | LOCAL | N/A | http://localhost:3000 |
-| DEV | http://pets-dev-website.pets.svc.cluster.local:80 | https://pets-dev.mtcloud.pelter.net/ |
-| PROD | http://pets-website.pets.svc.cluster.local:80 | https://pets.mtcloud.pelter.net/ |
+| DEV | http://pets-dev-website.pets.svc.cluster.local:80 | https://pets-dev.pelter.net/ |
+| PROD | http://pets-website.pets.svc.cluster.local:80 | https://pets.pelter.net/ |
 
 # Python Flask API
-Notice that the internet URL matches the frontend client, the path /api is present for all API endpoints.
+Notice that the internet URL matches the frontend client, the path /api is present for all API endpoints. When running this locally, environment variables must be provided some way.
+
 | Environment | Cluster Host | External Host |
 | ----------- | ----------- | ----------- |
 | LOCAL | N/A | http://localhost:8080 |
-| DEV | http://pets-dev-api.pets.svc.cluster.local:8080 | https://pets-dev.mtcloud.pelter.net/api |
-| PROD |  http://pets-api.pets.svc.cluster.local:8080 | https://pets.mtcloud.pelter.net/api |
+| DEV | http://pets-dev-api.pets.svc.cluster.local:8080 | https://pets-dev.pelter.net/api |
+| PROD |  http://pets-api.pets.svc.cluster.local:8080 | https://pets.pelter.net/api |
+
 
 # Storage Servers
 There are two stateful applications in this project: a Postgres database and MinIO-S3. To save money and node volume mount slots, these applications share a persistent volume claim by using subpath feature of mounting. So these containers run side-by-side in the same pod and can be reached using a common service name, but differing ports.

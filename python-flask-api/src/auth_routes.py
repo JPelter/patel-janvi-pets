@@ -1,7 +1,7 @@
-# STL
+
 from datetime import datetime, timedelta, timezone
-from functools import partial, wraps
-import random
+from functools import wraps
+
 from email.message import EmailMessage
 from os import environ
 import secrets
@@ -19,6 +19,9 @@ def token_request_endpoint():
     # QUERY FOR ACCOUNT OBJECT ON EMAIL
     app.logger.info(f"Login token email request for: {request.get_json()['email']}")
     req_acct = db.session.query(ACCOUNT).filter(ACCOUNT.email == request.get_json()['email']).first()
+
+    # CREATE NEW TOKEN!
+
     new_token = ''.join(secrets.choice(string.ascii_uppercase + string.digits) for _ in range(6))
     if not req_acct: # HANDLE CASE WHEN ACCOUNT DOESN'T EXIST YET!
         req_acct = ACCOUNT(email=request.get_json()["email"], login_token=new_token)
@@ -64,6 +67,9 @@ def token_post_endpoint():
     if datetime.now(timezone.utc) < req_acct.request_time + timedelta(minutes=login_token_minutes) and req_acct.login_token == request.get_json()["login_token"]:
         session['email'] = request.get_json()["email"]
         session['creation_time'] = datetime.now(timezone.utc)
+
+        session['user_uuid'] = req_acct.uuid
+
         req_acct.last_successful_login = session['creation_time']
         app.logger.info(f"Created session cookie for: {request.get_json()['email']}")
         return jsonify({"message":"Token exchanged for authenticating session cookie!", "email":request.get_json()["email"]})
@@ -77,18 +83,3 @@ def logout_endpoint():
     # TODO MAKE IT POSSIBLE TO EXPIRE EXISTING SESSIONS FROM ALL OTHER DEVICES (BY SETTING A LOGOUT TIME IN ACCOUNT?)
     return jsonify({"message":"Session cookie cleared!"})
 
-def login_required(admin_endpoint=False):
-    app.logger.debug(f"login_required API call")
-    def decorator(function_to_protect):
-        @wraps(function_to_protect)
-        def wrapper(*args, **kwargs):
-            if session.get('email'):
-                req_acct = db.session.query(ACCOUNT).filter(ACCOUNT.email == session["email"]).first()
-                if admin_endpoint == "admin" and not req_acct.admin_account:
-                    return jsonify({"message":"Not authorized sorry!"}), 403
-                else:
-                    return function_to_protect(*args, **kwargs)
-            else:
-                return jsonify({"message":"Try logging in!"}), 401
-        return wrapper
-    return decorator

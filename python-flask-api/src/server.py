@@ -3,16 +3,18 @@ import logging
 from os import environ
 
 # EXT
-from flask import Flask, jsonify, request
+
+from flask import Flask, jsonify
+
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 
 from waitress import serve
 
-from sqlalchemy import and_, asc, create_engine, inspect, or_
+
+from sqlalchemy import create_engine
 from sqlalchemy.ext.automap import automap_base
-from sqlalchemy.orm import Session
-from sqlalchemy.sql.expression import func
+
 
 from flask import Flask, session
 ################################
@@ -24,7 +26,9 @@ if environ['POSTGRES_HOST'].startswith("localhost"): # ON LOCAL,
     CORS(app, supports_credentials=True) # IF RUNNING API AND FRONTEND REACT, DIFFERENT PORT IS CORS!
     app.logger.setLevel(logging.DEBUG)
 
-app.config['CORS_HEADERS'] = 'Content-Type'
+    app.config['CORS_HEADERS'] = 'Content-Type'
+
+
 app.secret_key = environ['FLASK_SECRET']
 
 db = SQLAlchemy()
@@ -36,10 +40,34 @@ db_Base.prepare(db_engine)
 
 ACCOUNT = db_Base.classes.account
 
+APPOINTMENT_REQUEST = db_Base.classes.appointment_request
+APPOINTMENT = db_Base.classes.appointment
+
+def login_required(admin_endpoint=False):
+    def decorator(function_to_protect):
+        @wraps(function_to_protect)
+        def wrapper(*args, **kwargs):
+            app.logger.debug(f"login_required API call")
+            if session.get('user_uuid'):
+                req_acct = db.session.query(ACCOUNT).get(session['user_uuid'])
+                # TODO: what if req_acct doesnt exist? but this case is quite rare...
+                if admin_endpoint and not req_acct.admin_account:
+                    return jsonify({"message":"Not authorized sorry!"}), 403
+                else:
+                    return function_to_protect(*args, **kwargs)
+            else:
+                return jsonify({"message":"Try logging in!"}), 401
+        return wrapper
+    return decorator
+
+
 ##################################
 ##### IMPORTED SERVER ROUTES #####
 ##################################
 from auth_routes import *
+
+from appointment_routes import *
+
 
 ########################
 ###### STARTUP!!! ######
@@ -52,12 +80,17 @@ if __name__ == '__main__':
     @app.route("/api/authcheck", methods=['GET'])
     @login_required(admin_endpoint=False) # EXAMPLE OF HOW TO USE THE LOGIN REQUIRED DECOCATOR! OPTIONAL ARGUMENT, DEFAULT IS False!
     def authcheck_endpoint():
-        app.logger.info(f"Authcheck by: {session['email']}")
+
+        app.logger.info(f"Authcheck by: {session['email']}|{session['user_uuid']}")
+
         return jsonify({"message":"Authenticated!", "email":session['email'], "session_start":session['creation_time']})
         
     @app.route("/api/admincheck", methods=['GET'])
     @login_required(admin_endpoint=True) # EXAMPLE OF HOW TO MAKE ADMIN ENDPOINT!
     def admincheck_endpoint():
+
+        app.logger.info(f"Admincheck by:  {session['email']}|{session['user_uuid']}")
+
         return jsonify({"message":"Admin!", "email":session['email'], "session_start":session['creation_time']})
 
     db.init_app(app)

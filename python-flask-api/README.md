@@ -11,17 +11,22 @@ This is a python flask server. The entrypoint of this application is *server.py*
 ## server.py
 Starts with library imports for creating a flask SQL Alchemy app.
 
-Creates common objects that other scripts rely on: flask app, database connection, table objects, object-storage client.
+
+Creates common objects that other scripts rely on: flask app, database connection, table objects, object-storage client, the critical function *login_required*.
 
 Database table objects are renamed to be FRIENDLY.
 
-Other scripts are imported that define sets of related functions and API routes. This includes the critical function *login_required* from **auth_routes.py**.
+Other scripts are imported that define sets of related functions and API routes. 
+
 
 Finally, the server is started up (when it is the entrypoint). This startup includes defining two routes: an open healthcheck endpoint that shows the server is running and an authenticated route that verifies connectivity to database and object-storage client.
 
 ## auth_routes.py
 Several imports from standard library, some flask imports, and import of the common objects from **server.py**.
 
-The script starts by defining 3 POST routes. First a request containing JSON data with key "email" triggers creation of a login token (registering the email in the DB if not recorded already) and email send of token to the user. Next a route accepting matching JSON data for "email" and "login_token", this will authenticate the client with a flask session cookie. There is also an enable to logout, the server respondes by telling the client to delete the session cookie.
 
-Finally, there is the tricky but critical function *login_required*. It's 3 functions: *login_required* takes optional boolean argument and returns the python decorator function, *decorator*, which takes as argument the flask route function you are trying to protector. The most inner function, *wrapper*, handles the intercepted arguments and flask request objects intended for the route function. If everything is OK, the interception is ended and the intended route gives response to client.
+The script starts by defining 3 POST routes. First a request containing JSON data with key "email" triggers creation of a login token (registering the email in the DB if not recorded already) and email send of token to the user. Next a route accepting matching JSON data for "email" and "login_token", this will authenticate the client with a flask session cookie. There is also an enable to logout: the server responds by telling the client to delete the session cookie.
+
+## appointment_routes.py
+Several imports from standard library, some flask imports, and import of the common objects from **server.py**.
+
