@@ -10,7 +10,9 @@ axios.defaults.withCredentials = true;
 
 function App() {
   const [authenticated, setAuthenticated ] = useState(false);
+
   const [admin, setAdmin ] = useState(false);
+
 
   useEffect(() => {
     async function checkAuth() {
@@ -29,6 +31,7 @@ function App() {
     checkAuth();
   }, []);
 
+
   useEffect(() => {
     async function checkAdmin() {
       try {
@@ -46,17 +49,20 @@ function App() {
     checkAdmin();
   }, []);
 
+
   return (
     <Router>
       <NavBar authenticated={authenticated}/>
       <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
         <Routes>
+
           <Route path="/" exact="true" element={<Home authenticated={authenticated} admin={admin}/>} />
           <Route path="/services" element={<Services authenticated={authenticated} admin={admin}/>} />
           <Route path="/account" element={<Account authenticated={authenticated} setAuthenticated={setAuthenticated} admin={admin}/>} />
           {authenticated && (
             <>
               <Route path="/appointments" element={<Appointments admin={admin}/>} />
+
             </>
           )}
         </Routes>

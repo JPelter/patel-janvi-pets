@@ -1,3 +1,4 @@
+
 import { Paper, Stack, Typography } from '@mui/material';
 import EventIcon from '@mui/icons-material/Event';
 import Accordion from '@mui/material/Accordion';
@@ -141,6 +142,7 @@ function Appointments(props) {
             </Accordion>
 
             {admin && (<AdminAppointments/>)}
+
         </div>
     );
 }

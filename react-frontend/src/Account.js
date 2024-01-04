@@ -50,7 +50,9 @@ function UnauthenticatedComponent(props) {
 
     return (
         <div style={{ textAlign: 'center' }}>
+
             <Paper elevation={3} style={{ padding: '20px', margin: '20px'}} component={Stack} direction="column" justifyContent="center">
+
                 {!emailSubmitted && (
                     <form onSubmit={handleSubmitEmail}>
                         <TextField
@@ -63,7 +65,9 @@ function UnauthenticatedComponent(props) {
                             variant="outlined"
                         />
                         <Button type="submit" variant="contained" color="primary">
+
                             Request login token!
+
                         </Button>
                     </form>
                 )}
@@ -80,7 +84,9 @@ function UnauthenticatedComponent(props) {
                             variant="outlined"
                         />
                         <Button type="submit" variant="contained" color="primary">
+
                             Login with token!
+
                         </Button>
                     </form>
                 )}
@@ -95,6 +101,7 @@ function UnauthenticatedComponent(props) {
     );
 }
 
+
 function AdminComponent() {
     return (
         <div style={{ marginTop: '50px', textAlign: 'center' }}>
@@ -105,6 +112,7 @@ function AdminComponent() {
 
 function AuthenticatedComponent(props) {
     console.log(props.admin)
+
     const handleLogout = async () => {
       try {
         // Make your axios API call for logout here
@@ -123,18 +131,23 @@ function AuthenticatedComponent(props) {
           <p>Welcome to your profile page!</p>
           {/* Display authenticated user's profile information */}
         </div>
+
         <div style={{ marginTop: '50px', textAlign: 'center' }}>
+
           {/* MUI Button for Logout */}
           <Button onClick={handleLogout} variant="contained">
             Logout
           </Button>
         </div>
+
         {props.admin && (
             <AdminComponent/>
         )}
+
       </div>
     );
   }
+
 
 function Account(props) {
     const { authenticated, setAuthenticated, admin } = props;
@@ -147,3 +160,4 @@ function Account(props) {
 }
 
 export default Account;
+

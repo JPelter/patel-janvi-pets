@@ -23,6 +23,7 @@ Notice that the internet URL matches the frontend client, the path /api is prese
 | DEV | http://pets-dev-api.pets.svc.cluster.local:8080 | https://pets-dev.pelter.net/api |
 | PROD |  http://pets-api.pets.svc.cluster.local:8080 | https://pets.pelter.net/api |
 
+
 # Storage Servers
 There are two stateful applications in this project: a Postgres database and MinIO-S3. To save money and node volume mount slots, these applications share a persistent volume claim by using subpath feature of mounting. So these containers run side-by-side in the same pod and can be reached using a common service name, but differing ports.
 
