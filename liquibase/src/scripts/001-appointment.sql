@@ -3,6 +3,7 @@ CREATE TABLE APPOINTMENT_REQUEST (
     customer_uuid CHAR(60) NOT NULL REFERENCES ACCOUNT(uuid),
     creation_timestamp TIMESTAMPTZ NOT NULL DEFAULT current_timestamp,
 
+    target_time TIMESTAMPTZ NOT NULL,
     service_requested VARCHAR(100) NOT NULL,
     recurring_weekly BOOLEAN DEFAULT FALSE,
     recurring_enddate TIMESTAMPTZ,
