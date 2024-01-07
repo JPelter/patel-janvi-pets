@@ -16,11 +16,11 @@ from server import app, db, login_required, ACCOUNT, APPOINTMENT_REQUEST, APPOIN
 @app.route("/api/request-appointment", methods=['POST'])
 @login_required()
 def create_request():
+    app.logger.debug(f"Got request for appointments with JSON:\n{request.get_json()}")
     appt_req = db.session.query(APPOINTMENT_REQUEST).filter(APPOINTMENT_REQUEST.customer_uuid == session['user_uuid'], APPOINTMENT_REQUEST.request_accepted == None).first()
     if appt_req:
         return jsonify({"message":"You already have a pending appointment request!"}), 405 # METHOD NOT
-    # MANDATORY FIELDS!
-    app.logger.debug(f"Got request for appointments with JSON:\n{request.get_json()}")
+    # MANDATORY FIELDS
     appt_req = APPOINTMENT_REQUEST(customer_uuid=session['user_uuid'], target_time=request.get_json()['target_time'], service_requested=request.get_json()['service_requested'])
     # ADD OPTIONAL FIELDS IF PRESENT!
     appt_req.request_note = request.get_json().get('request_note')
@@ -36,6 +36,7 @@ def get_request():
     appt_req = db.session.query(APPOINTMENT_REQUEST).filter(APPOINTMENT_REQUEST.customer_uuid == session['user_uuid'], APPOINTMENT_REQUEST.request_accepted == None).first()
     if appt_req:
         return jsonify({
+            "request_uuid": appt_req.uuid,
             "customer_uuid": appt_req.customer_uuid,
             "target_time": appt_req.target_time,
             "service_requested": appt_req.service_requested,

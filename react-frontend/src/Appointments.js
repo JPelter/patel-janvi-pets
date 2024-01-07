@@ -1,7 +1,7 @@
 
 import EventIcon from '@mui/icons-material/Event';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
 import {
@@ -27,7 +27,24 @@ function UserAppointments() {
     const [selectedService, setSelectedService] = useState('');
     const [submitting, setSubmitting] = useState(false);
     const [submitted, setSubmitted] = useState(false);
+    const [requests, setRequests] = useState([]);
 
+    useEffect(() => {
+        axios
+            .get(`${process.env.REACT_APP_API_REQUEST_APPOINTMENT}`)
+            .then((response) => {
+                // Handle success
+                setRequests(response.data);
+                if (response.status === 200) {
+                    setSubmitted(true);
+                }
+            })
+            .catch((error) => {
+                // Handle error
+                console.error('Error fetching requests:', error);
+                // Optionally, display an error message to the user
+            });
+    }, []);
     const handleTargetTimeChange = (event) => {
         setTargetTime(event.target.value);
     };
@@ -47,14 +64,23 @@ function UserAppointments() {
             .post(`${process.env.REACT_APP_API_REQUEST_APPOINTMENT}`, requestData)
             .then((response) => {
                 // Handle success
+                axios
+                .get(`${process.env.REACT_APP_API_REQUEST_APPOINTMENT}`)
+                .then((response) => {
+                    // Handle success
+                    setRequests(response.data);
+                })
+                .catch((error) => {
+                    // Handle error
+                    console.error('Error fetching requests:', error);
+                    // Optionally, display an error message to the user
+                });
                 setSubmitting(false);
                 setSubmitted(true);
-                // Optionally, handle UI updates or success message
             })
             .catch((error) => {
                 // Handle error
                 console.error('Error submitting appointment request:', error);
-                setSubmitting(false);
                 // Optionally, display an error message to the user
             });
     };
@@ -137,21 +163,6 @@ function UserAppointments() {
                 </Typography>
                 </AccordionDetails>
             </Accordion>
-            <Accordion elevation={3} disabled style={{ maxWidth: '100%', marginLeft: '20px', marginRight: '20px' }}>
-                <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel2a-content"
-                id="panel2a-header"
-                >
-                <Typography>Old Requests</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                <Typography>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                    malesuada lacus ex, sit amet blandit leo lobortis eget.
-                </Typography>
-                </AccordionDetails>
-            </Accordion>
             <Accordion disabled elevation={3} style={{ maxWidth: '100%', marginBottom: "20px", marginLeft: '20px', marginRight: '20px', borderBottomLeftRadius: '4px', borderBottomRightRadius: '4px' }}>
                 <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
@@ -172,9 +183,38 @@ function UserAppointments() {
 }
 
 function AdminAppointments() {
+    const [adminRequests, setAdminRequests] = useState([]);
+    const [adminAppointments, setAdminAppointments] = useState([]);
+    useEffect(() => {
+        axios
+            .get(`${process.env.REACT_APP_API_REQUEST_ADMIN}`)
+            .then((response) => {
+                // Handle success
+                setAdminRequests(response.data);
+            })
+            .catch((error) => {
+                // Handle error
+                console.error('Error fetching requests:', error);
+                // Optionally, display an error message to the user
+            });
+        axios
+            .get(`${process.env.REACT_APP_API_APPOINTMENT_ADMIN}`)
+            .then((response) => {
+                // Handle success
+                setAdminAppointments(response.data);
+            })
+            .catch((error) => {
+                // Handle error
+                console.error('Error fetching requests:', error);
+                // Optionally, display an error message to the user
+            });
+    }, []);
+
+    const isFirstAccordionDisabled = adminRequests.length === 0;
+    const isSecondAccordionDisabled = adminAppointments.length === 0;
     return ( 
         <>
-            <Accordion elevation={3} style={{ maxWidth: '100%', marginTop: "20px", marginLeft: '20px', marginRight: '20px', borderTopLeftRadius: '4px', borderTopRightRadius: '4px' }}>
+            <Accordion elevation={3} style={{ maxWidth: '100%', marginTop: "20px", marginLeft: '20px', marginRight: '20px', borderTopLeftRadius: '4px', borderTopRightRadius: '4px' }} disabled={isFirstAccordionDisabled}>
                 <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
@@ -188,7 +228,7 @@ function AdminAppointments() {
                 </Typography>
                 </AccordionDetails>
             </Accordion>
-            <Accordion elevation={3} style={{ maxWidth: '100%', marginLeft: '20px', marginRight: '20px' }}>
+            <Accordion elevation={3} style={{ maxWidth: '100%', marginLeft: '20px', marginRight: '20px', borderBottomLeftRadius: '4px', borderBottomRightRadius: '4px' }} disabled={isSecondAccordionDisabled}>
                 <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel2a-content"
@@ -199,34 +239,6 @@ function AdminAppointments() {
                 <AccordionDetails>
                 <Typography>
                     TODO: LIST OF ALL UPCOMING APPOINTMENTS!
-                </Typography>
-                </AccordionDetails>
-            </Accordion>
-            <Accordion elevation={3} disabled style={{ maxWidth: '100%', marginLeft: '20px', marginRight: '20px' }}>
-                <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel2a-content"
-                id="panel2a-header"
-                >
-                <Typography>All Old Requests</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                <Typography>
-                    TODO: LIST OF ALL OLD REQUESTS!
-                </Typography>
-                </AccordionDetails>
-            </Accordion>
-            <Accordion elevation={3} style={{ maxWidth: '100%', marginLeft: '20px', marginRight: '20px', borderBottomLeftRadius: '4px', borderBottomRightRadius: '4px' }}>
-                <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel3a-content"
-                id="panel3a-header"
-                >
-                <Typography>All Old Appointments</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                <Typography>
-                    TODO: LIST OF ALL OLD APPOINTMENTS!
                 </Typography>
                 </AccordionDetails>
             </Accordion>
