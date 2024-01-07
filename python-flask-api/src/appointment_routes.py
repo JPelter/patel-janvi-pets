@@ -17,15 +17,18 @@ from server import app, db, login_required, ACCOUNT, APPOINTMENT_REQUEST, APPOIN
 @login_required()
 def create_request():
     req_acct = db.session.query(ACCOUNT).get(session['user_uuid'])
-    # appt_req = APPOINTMENT_REQUEST(customer_uuid=req_acct.uuid, window_start=request.get_json()['window_start'], window_end=request.get_json()['window_end'],
-    #                     service_requested=request.get_json()['service_requested'])
+    # MANDATORY FIELDS!
+    app.logger.debug(f"Got request for appointments with JSON:\n{request.get_json()}")
+    appt_req = APPOINTMENT_REQUEST(customer_uuid=req_acct.uuid, target_time=request.get_json()['target_time'], service_requested=request.get_json()['service_requested'])
     # ADD OPTIONAL FIELDS IF PRESENT!
     if 'request_note' in request.get_json():
-        pass
+        appt_req.request_note = request.get_json()['request_note']
     if 'recurring_weekly' in request.get_json():
-        pass
+        appt_req.recurring_weekly = request.get_json()['recurring_weekly']
     if 'recurring_enddate' in request.get_json():
-        pass
+        appt_req.recurring_enddate = request.get_json()['recurring_enddate']
+    db.session.add(appt_req)
+    db.session.commit()
     return jsonify({"message":"todo"})
 
 @app.route("/api/request-appointment", methods=['GET'])

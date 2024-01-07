@@ -33,7 +33,7 @@ function UnauthenticatedComponent(props) {
         setTokenSubmitted(true);
         e.preventDefault();
         try {
-            const response = await axios.post(`${process.env.REACT_APP_API_TOKEN_EXCHANGE}`, {
+            const response = await axios.post(`${process.env.REACT_APP_API_REQUEST_APPOINTMENT}`, {
                 email: email,
                 login_token: token
             }, {
