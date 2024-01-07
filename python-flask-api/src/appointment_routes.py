@@ -16,39 +16,70 @@ from server import app, db, login_required, ACCOUNT, APPOINTMENT_REQUEST, APPOIN
 @app.route("/api/request-appointment", methods=['POST'])
 @login_required()
 def create_request():
-    req_acct = db.session.query(ACCOUNT).get(session['user_uuid'])
+    appt_req = db.session.query(APPOINTMENT_REQUEST).filter(APPOINTMENT_REQUEST.customer_uuid == session['user_uuid'], APPOINTMENT_REQUEST.request_accepted == None).first()
+    if appt_req:
+        return jsonify({"message":"You already have a pending appointment request!"}), 405 # METHOD NOT
     # MANDATORY FIELDS!
     app.logger.debug(f"Got request for appointments with JSON:\n{request.get_json()}")
-    appt_req = APPOINTMENT_REQUEST(customer_uuid=req_acct.uuid, target_time=request.get_json()['target_time'], service_requested=request.get_json()['service_requested'])
+    appt_req = APPOINTMENT_REQUEST(customer_uuid=session['user_uuid'], target_time=request.get_json()['target_time'], service_requested=request.get_json()['service_requested'])
     # ADD OPTIONAL FIELDS IF PRESENT!
-    if 'request_note' in request.get_json():
-        appt_req.request_note = request.get_json()['request_note']
-    if 'recurring_weekly' in request.get_json():
-        appt_req.recurring_weekly = request.get_json()['recurring_weekly']
-    if 'recurring_enddate' in request.get_json():
-        appt_req.recurring_enddate = request.get_json()['recurring_enddate']
+    appt_req.request_note = request.get_json().get('request_note')
+    appt_req.recurring_weekly = request.get_json().get('recurring_weekly')
+    appt_req.recurring_enddate = request.get_json().get('recurring_enddate')
     db.session.add(appt_req)
     db.session.commit()
-    return jsonify({"message":"todo"})
+    return jsonify({"message":"Appointment request created!"})
 
 @app.route("/api/request-appointment", methods=['GET'])
 @login_required()
 def get_request():
-
-    return jsonify({"message":"todo"})
-
-#ADMIN ROUTES
+    appt_req = db.session.query(APPOINTMENT_REQUEST).filter(APPOINTMENT_REQUEST.customer_uuid == session['user_uuid'], APPOINTMENT_REQUEST.request_accepted == None).first()
+    if appt_req:
+        return jsonify({
+            "customer_uuid": appt_req.customer_uuid,
+            "target_time": appt_req.target_time,
+            "service_requested": appt_req.service_requested,
+            "recurring_weekly": appt_req.recurring_weekly,
+            "recurring_enddate": appt_req.recurring_enddate
+        })
+    else:
+        return jsonify({"message": "No appointment requests found."}), 204  # Return HTTP 204 for no content
+    
+# ADMIN ROUTES
 @app.route("/api/admin/request-appointment", methods=['GET'])
 @login_required(admin_endpoint=True)
 def admin_get_request():
-
-    return jsonify({"message":"todo"})
+    appt_reqs = db.session.query(APPOINTMENT_REQUEST, ACCOUNT).join(ACCOUNT, APPOINTMENT_REQUEST.customer_uuid == ACCOUNT.uuid).filter(APPOINTMENT_REQUEST.request_accepted == None).all()
+    requests = []
+    for appt_req, account in appt_reqs:
+        request_data = {
+            "customer_uuid": appt_req.customer_uuid,
+            "target_time": appt_req.target_time,
+            "service_requested": appt_req.service_requested,
+            "recurring_weekly": appt_req.recurring_weekly,
+            "recurring_enddate": appt_req.recurring_enddate,
+            "email": account.email
+        }
+        requests.append(request_data)
+    return jsonify(requests)
 
 @app.route("/api/admin/request-appointment", methods=['POST'])
 @login_required(admin_endpoint=True)
 def admin_resolve_request():
+    appt_req_uuid = request.get_json().get('appt_req_uuid')
+    request_accepted = request.get_json().get('request_accepted')
+    appt_req = db.session.query(APPOINTMENT_REQUEST).filter(APPOINTMENT_REQUEST.uuid == appt_req_uuid).first()
+    appt_req.request_accepted = request_accepted
 
-    return jsonify({"message":"todo"})
+    if request_accepted:
+        # Create an APPOINTMENT
+        appointment = APPOINTMENT(customer_uuid=appt_req.customer_uuid, appointment_time=appt_req.target_time, service_requested=appt_req.service_requested, admin_uuid=session['user_uuid'], request_uuid=appt_req_uuid)
+        appointment.recurring_weekly = appt_req.recurring_weekly
+        appointment.recurring_enddate = appt_req.recurring_enddate
+        db.session.add(appointment)
+
+    db.session.commit()
+    return jsonify({"message": "Appointment request resolved"})
 
 ######################
 ### APPT ENDPOINTS ###
