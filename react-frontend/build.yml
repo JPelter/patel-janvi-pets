@@ -8,13 +8,13 @@ trigger:
     include:
     - react-frontend
 #
-schedules:
-- cron: 0 8 * * * # DAILY BUILD 8AM UTC => 3AM EST/4AM EDT
-  branches:
-    include:
-    - feature/*
-    - main
-  always: true
+# schedules:
+# - cron: 0 8 * * * # DAILY BUILD 8AM UTC => 3AM EST/4AM EDT
+#   branches:
+#     include:
+#     - feature/*
+#     - main
+#   always: true
 
 jobs:
 - job: BuildAndPush
