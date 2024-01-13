@@ -1,5 +1,5 @@
 CREATE TABLE ACCOUNT (
-    uuid CHAR(60) PRIMARY KEY DEFAULT gen_random_uuid(),
+    uuid CHAR(36) PRIMARY KEY DEFAULT gen_random_uuid(),
     email VARCHAR(100) UNIQUE,
     creation_timestamp TIMESTAMPTZ NOT NULL DEFAULT current_timestamp,
 

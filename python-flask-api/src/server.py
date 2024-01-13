@@ -21,14 +21,12 @@ from flask import Flask, session
 #### INT AND COMMON OBJECTS ####
 ################################
 app = Flask(__name__)
-app.logger.setLevel(logging.INFO) # TWO LOGGERS :?
-if environ['POSTGRES_HOST'].startswith("localhost"): # ON LOCAL, 
+app.logger.setLevel(logging.INFO)
+if environ['POSTGRES_HOST'].startswith("localhost"): # ON LOCAL
     CORS(app, supports_credentials=True) # IF RUNNING API AND FRONTEND REACT, DIFFERENT PORT IS CORS!
-    app.logger.setLevel(logging.DEBUG)
-
     app.config['CORS_HEADERS'] = 'Content-Type'
-
-
+    app.logger.setLevel(logging.DEBUG)  # TWO LOGGERS ON LOCAL?
+    
 app.secret_key = environ['FLASK_SECRET']
 
 db = SQLAlchemy()
@@ -39,7 +37,6 @@ db_Base = automap_base()
 db_Base.prepare(db_engine)
 
 ACCOUNT = db_Base.classes.account
-
 APPOINTMENT_REQUEST = db_Base.classes.appointment_request
 APPOINTMENT = db_Base.classes.appointment
 
