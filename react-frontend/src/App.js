@@ -1,68 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import NavBar from './NavBar';
-import Home from './Home';
-import Services from './Services';
-import Appointments from './Appointments';
-import Account from './Account';
+import HomeMain from './Home/HomeMain';
+import AppointmentMain from './Appointment/AppointmentMain';
+import AccountMain from './/Account/AccountMain';
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 
 function App() {
+  const [checkedAuth, setCheckedAuth] = useState(false);
   const [authenticated, setAuthenticated ] = useState(false);
-
   const [admin, setAdmin ] = useState(false);
-
+  const props = { authenticated, setAuthenticated, admin, setAdmin, checkedAuth, setCheckedAuth };
 
   useEffect(() => {
     async function checkAuth() {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_API_AUTHCHECK}`, {}, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
+        const authResponse = await axios.get(`${process.env.REACT_APP_API_AUTHCHECK}`, {}, {headers: {'Content-Type': 'application/json'}});
         setAuthenticated(true);
-        console.log('Auth confirmed:', response.data);
+        console.log('Auth confirmed:', authResponse.data);
+        
+        // CHECK IF ADMIN NOW!
+        const adminResponse = await axios.get(`${process.env.REACT_APP_API_ADMINCHECK}`, {}, {headers: {'Content-Type': 'application/json'}});
+        setAdmin(true);
+        console.log('Admin confirmed:', adminResponse.data);
+
       } catch (error) {
           console.error('Error checking auth:', error);
+      } finally {
+        setCheckedAuth(true);
       }
     }
     checkAuth();
   }, []);
 
-
-  useEffect(() => {
-    async function checkAdmin() {
-      try {
-        const response = await axios.get(`${process.env.REACT_APP_API_ADMINCHECK}`, {}, {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        setAdmin(true);
-        console.log('Admin confirmed:', response.data);
-      } catch (error) {
-          console.error('Error checking admin:', error);
-      }
-    }
-    checkAdmin();
-  }, []);
-
-
+  console.log('App props:', props);
   return (
     <Router>
       <NavBar authenticated={authenticated}/>
       <div style={{display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
         <Routes>
-
-          <Route path="/" exact="true" element={<Home authenticated={authenticated} admin={admin}/>} />
-          <Route path="/services" element={<Services authenticated={authenticated} admin={admin}/>} />
-          <Route path="/account" element={<Account authenticated={authenticated} setAuthenticated={setAuthenticated} admin={admin}/>} />
+          <Route path="/" exact="true" element={<HomeMain {...props}/>} />
+          <Route path="/account" element={<AccountMain {...props}/>} />
           {authenticated && (
             <>
-              <Route path="/appointments" element={<Appointments admin={admin}/>} />
-
+              <Route path="/appointments" element={<AppointmentMain {...props}/>} />
             </>
           )}
         </Routes>
