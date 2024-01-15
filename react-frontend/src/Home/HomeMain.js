@@ -1,8 +1,14 @@
-import { Paper, Stack, Typography, Link  } from '@mui/material';
-import PetsIcon from '@mui/icons-material/Pets';
 import { Link as RouterLink } from 'react-router-dom';
 
-function Home() {
+import PetsIcon from '@mui/icons-material/Pets';
+import { Paper, Stack, Typography, Link  } from '@mui/material';
+import EventIcon from '@mui/icons-material/Event';
+
+
+import Services from './Services';
+
+function HomeMain(props) {
+    console.log('Home props:', props);
     return (
         <div>
             <Paper elevation={3} style={{ padding: '20px', margin: '20px'}} component={Stack} direction="row" justifyContent="center" alignItems="center" spacing={2}>
@@ -12,7 +18,6 @@ function Home() {
 
                 <PetsIcon sx={{ fontSize: '3.5rem' }} /> {/* Adjust the fontSize */}
             </Paper>
-
             <Paper elevation={3} style={{ padding: '20px', margin: '20px'}} component={Stack} direction="column" justifyContent="center">
                 <Typography sx={{ margin: '5px', fontFamily: 'Verdana', fontSize: '1.1rem', color: '#555', fontStyle: 'italic' }}>
                     Enjoy the photos and videos below!
@@ -24,8 +29,13 @@ function Home() {
                     Or <Link component={RouterLink} to="/account" underline="hover" sx={{ color: '#009688', fontWeight: 'bold' }}>register/login</Link> to chat and request an appointment!
                 </Typography>
             </Paper>
+            <Paper elevation={3} style={{ padding: '20px', margin: '20px'}} component={Stack} direction="row" justifyContent="center" alignItems="center" spacing={2}>
+                <EventIcon sx={{ fontSize: '3.5rem' }} />
+                <Typography variant="h3" sx={{ fontFamily: 'Dancing Script'}}>Services!</Typography>
+            </Paper>
+            <Services {...props}/>
         </div>
     );
 }
 
-export default Home;
+export default HomeMain;

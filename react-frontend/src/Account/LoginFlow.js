@@ -1,12 +1,9 @@
 import React from 'react';
+import { Paper, TextField, Button, Stack } from '@mui/material';
 import axios from 'axios';
 
-import { Paper, TextField, Button, Stack } from '@mui/material';
-
-
-axios.defaults.withCredentials = true;
-
-function UnauthenticatedComponent(props) {
+const LoginFlow = (props) => {
+    console.log('LoginFlow props:', props);
     const [email, setEmail] = React.useState('');
     const [token, setToken] = React.useState('');
     const [emailSubmitted, setEmailSubmitted] = React.useState(false);
@@ -65,9 +62,7 @@ function UnauthenticatedComponent(props) {
                             variant="outlined"
                         />
                         <Button type="submit" variant="contained" color="primary">
-
                             Request login token!
-
                         </Button>
                     </form>
                 )}
@@ -84,9 +79,7 @@ function UnauthenticatedComponent(props) {
                             variant="outlined"
                         />
                         <Button type="submit" variant="contained" color="primary">
-
                             Login with token!
-
                         </Button>
                     </form>
                 )}
@@ -99,65 +92,6 @@ function UnauthenticatedComponent(props) {
             </Paper>
         </div>
     );
-}
+};
 
-
-function AdminComponent() {
-    return (
-        <div style={{ marginTop: '50px', textAlign: 'center' }}>
-            <p>You are an admin!</p>
-        </div>
-      );
-}
-
-function AuthenticatedComponent(props) {
-    console.log(props.admin)
-
-    const handleLogout = async () => {
-      try {
-        // Make your axios API call for logout here
-        const response = await axios.get(`${process.env.REACT_APP_API_LOGOUT}`);
-        console.log('Logout API call:', response.data);
-        props.setAuthenticated(false);
-      } catch (error) {
-        console.error('Error logging out:', error);
-        // TODO: delete cookie with client manually?
-      }
-    };
-  
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <div style={{ flex: '1', overflow: 'auto' }}>
-          <p>Welcome to your profile page!</p>
-          {/* Display authenticated user's profile information */}
-        </div>
-
-        <div style={{ marginTop: '50px', textAlign: 'center' }}>
-
-          {/* MUI Button for Logout */}
-          <Button onClick={handleLogout} variant="contained">
-            Logout
-          </Button>
-        </div>
-
-        {props.admin && (
-            <AdminComponent/>
-        )}
-
-      </div>
-    );
-  }
-
-
-function Account(props) {
-    const { authenticated, setAuthenticated, admin } = props;
-
-    return (
-        <>
-            {authenticated ? <AuthenticatedComponent authenticated={authenticated} setAuthenticated={setAuthenticated} admin={admin} /> : <UnauthenticatedComponent authenticated={authenticated} setAuthenticated={setAuthenticated} />}
-        </>
-    );
-}
-
-export default Account;
-
+export default LoginFlow;

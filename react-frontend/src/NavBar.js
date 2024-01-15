@@ -5,7 +5,6 @@ import IconButton from '@mui/material/IconButton';
 import { NavLink, useLocation } from 'react-router-dom';
 import HomeIcon from '@mui/icons-material/Home';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import MenuBookIcon from '@mui/icons-material/MenuBook';
 import EventIcon from '@mui/icons-material/Event';
 
 export default function ButtonAppBar(props) {
@@ -24,9 +23,6 @@ export default function ButtonAppBar(props) {
         <div>
           <IconButton component={NavLink} to="/" exact="true" sx={{ ...commonButtonStyle, ...(location.pathname === '/' ? activeLinkStyle : {}) }}>
             <HomeIcon />
-          </IconButton>
-          <IconButton component={NavLink} to="/services" sx={{ ...commonButtonStyle, ...(location.pathname === '/services' ? activeLinkStyle : {}) }}>
-            <MenuBookIcon />
           </IconButton>
           {props.authenticated && (
             <>
