@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import {
     CircularProgress,
     TextField,
@@ -12,6 +13,8 @@ import {
     Stack,
     Typography
 } from '@mui/material';
+import { MobileDateTimePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs'; // Import dayjs library
 
 const services = ['Checkup', 'Short walk', 'Long walk', 'Vet travel', 'Bath'];
 
@@ -19,11 +22,43 @@ const AppointmentRequest = (props) => {
     console.log('AppointmentRequest props:', props);
     const [targetTime, setTargetTime] = useState('');
     const [selectedService, setSelectedService] = useState('');
-    const [submitting, setSubmitting] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [submitted, setSubmitted] = useState(false);
+    const [requestUuid, setRequestUuid] = useState('');
+    const [recurringWeekly, setRecurringWeekly] = useState(false);
+    const [recurringEndDate, setRecurringEndDate] = useState('');
 
-    const handleTargetTimeChange = (event) => {
-        setTargetTime(event.target.value);
+    const getExistingRequest = () => {
+        axios
+            .get(`${process.env.REACT_APP_API_REQUEST_APPOINTMENT}`)
+            .then((response) => {
+                if (response.status === 200) {
+                    console.log('Existing request response:', response.data);
+                    setSubmitted(true);
+                    const { target_time, service_requested, request_uuid, recurring_weekly, recurring_enddate } = response.data;
+                    setSelectedService(service_requested);
+                    setRequestUuid(request_uuid);
+                    setRecurringWeekly(recurring_weekly);
+                    setRecurringEndDate(recurring_enddate);
+                    setTargetTime(target_time);
+                    // Convert the timestamp to a Date object
+                    const dateObject = new Date(target_time);
+                    const localDateTimeString = dateObject.toLocaleString();
+                    setTargetTime(localDateTimeString);
+                }
+            })
+            .catch((error) => {
+                console.error('Error making GET request:', error);
+            });
+        setLoading(false);
+    };
+
+    useEffect(() => {
+        getExistingRequest();
+    }, []);
+
+    const handleTargetTimeChange = (value) => {
+        setTargetTime(value);
     };
 
     const handleServiceChange = (event) => {
@@ -31,7 +66,7 @@ const AppointmentRequest = (props) => {
     };
 
     const handleSubmit = () => {
-        setSubmitting(true);
+        setLoading(true);
 
         const requestData = {
             target_time: targetTime,
@@ -40,11 +75,35 @@ const AppointmentRequest = (props) => {
         axios
             .post(`${process.env.REACT_APP_API_REQUEST_APPOINTMENT}`, requestData)
             .then((response) => {
-                setSubmitting(false);
+                setRequestUuid(response.data.request_uuid); // Set the request_uuid when there's a response
+                // Convert the timestamp to a Date object
+                const dateObject = new Date(targetTime);
+                const localDateTimeString = dateObject.toLocaleString();
+                setTargetTime(localDateTimeString);
+                setLoading(false);
                 setSubmitted(true);
             })
             .catch((error) => {
                 console.error('Error submitting appointment request:', error);
+            });
+    };
+
+    const handleCancel = () => {
+        setLoading(true);
+
+        axios
+            .delete(`${process.env.REACT_APP_API_REQUEST_APPOINTMENT}`, { data: {request_uuid: requestUuid} })
+            .then((response) => {
+                setRequestUuid('');
+                setRecurringWeekly(false);
+                setRecurringEndDate('');
+                setTargetTime('');
+                setSelectedService('');
+                setSubmitted(false);
+                setLoading(false);
+            })
+            .catch((error) => {
+                console.error('Error canceling appointment request:', error);
             });
     };
 
@@ -56,24 +115,29 @@ const AppointmentRequest = (props) => {
             alignItems="center"
             sx={{
                 width: '100%', // Make sure the Stack occupies full width
-                minHeight: submitting || submitted ? '200px' : 'auto', // Conditionally set fixed height
+                height: '250px', // Conditionally set fixed height
             }}
         >
-            {/* Check when open request already exists and display details */}
-            {!submitting && !submitted && (
+            {loading && <CircularProgress />}
+            {!loading && !submitted && (
                 <>
-                    <TextField
-                        id="targetTime"
-                        label="Target Time"
-                        type="datetime-local"
-                        value={targetTime}
-                        onChange={handleTargetTimeChange}
-                        InputLabelProps={{ shrink: true }}
-                        sx={{ width: '100%' }} // Set width to 100%
-                        required // Mark as required
-                        inputProps={{ min: new Date().toISOString().slice(0, 16) }} // Disable past dates
-                    />
-                    <FormControl sx={{ width: '100%' }}> {/* Set width to 100% */}
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <MobileDateTimePicker
+                            id="targetTime"
+                            label="Target Time"
+                            placeholder="Click to pick a time!"
+                            value={targetTime}
+                            onChange={handleTargetTimeChange}
+                            renderInput={(params) => <TextField {...params} />}
+                            InputLabelProps={{ shrink: true }}
+                            sx={{ width: '100%' }}
+                            required
+                            minutesStep={5}
+                            minDateTime={dayjs().add(2, 'days')} // Set the earliest datetime (2 days from now)
+                            maxDateTime={dayjs().add(14, 'days')} // Set the latest datetime (7 days from now)
+                        />
+                    </LocalizationProvider>
+                    <FormControl sx={{ width: '100%' }}>
                         <InputLabel id="serviceLabel" required>Select Service</InputLabel>
                         <Select
                             labelId="serviceLabel"
@@ -100,8 +164,22 @@ const AppointmentRequest = (props) => {
                     </Button>
                 </>
             )}
-            {submitting && <CircularProgress />} {/* Show loading wheel when submitting */}
-            {submitted && <Typography>Submitted!</Typography>} {/* Show "Submitted!" when request is submitted */}
+            
+            {!loading && submitted && (
+                <>
+                    <Typography>Submitted!</Typography>
+                    <Typography>Target Time: {targetTime}</Typography>
+                    <Typography>Service Requested: {selectedService}</Typography>
+                    <Button
+                        variant="contained"
+                        color="secondary"
+                        onClick={handleCancel}
+                        sx={{ width: '100%' }} // Set width to 100%
+                    >
+                        Cancel Appointment
+                    </Button>
+                </>
+            )}
         </Stack>
     );
 };

@@ -28,7 +28,19 @@ def create_request():
     appt_req.recurring_enddate = request.get_json().get('recurring_enddate')
     db.session.add(appt_req)
     db.session.commit()
-    return jsonify({"message":"Appointment request created!"})
+    return jsonify({"message":"Appointment request created!", "reuqest_uuid": appt_req.uuid})
+
+@app.route("/api/request-appointment", methods=['DELETE'])
+@login_required()
+def delete_request():
+    # USERS CAN DELETE THEIR REQUESTS, BUT ONLY IF THEY HAVEN'T BEEN ACCEPTED/REJECTED!
+    appt_req = db.session.query(APPOINTMENT_REQUEST).filter(APPOINTMENT_REQUEST.uuid == request.get_json()['request_uuid'], APPOINTMENT_REQUEST.customer_uuid == session['user_uuid'], APPOINTMENT_REQUEST.request_accepted == None).first()
+    if appt_req:
+        db.session.delete(appt_req)
+        db.session.commit()
+        return jsonify({"message":"Appointment request deleted!"})
+    else:
+        return jsonify({"message":"No appointment requests found."}), 204
 
 @app.route("/api/request-appointment", methods=['GET'])
 @login_required()
@@ -97,6 +109,7 @@ def cancel_appointment():
 
     return jsonify({"message":"todo"})
 
+# ADMIN ROUTES
 @app.route("/api/admin/appointment", methods=['GET'])
 @login_required(admin_endpoint=True)
 def admin_get_appointment():
