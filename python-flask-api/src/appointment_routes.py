@@ -67,6 +67,7 @@ def admin_get_request():
     for appt_req, account in appt_reqs:
         request_data = {
             "customer_uuid": appt_req.customer_uuid,
+            "request_uuid": appt_req.uuid,
             "target_time": appt_req.target_time,
             "service_requested": appt_req.service_requested,
             "recurring_weekly": appt_req.recurring_weekly,
@@ -79,11 +80,12 @@ def admin_get_request():
 @app.route("/api/admin/request-appointment", methods=['POST'])
 @login_required(admin_endpoint=True)
 def admin_resolve_request():
+    app.logger.debug(f"Got request to resolve appointment request with JSON:\n{request.get_json()}")
     appt_req_uuid = request.get_json().get('appt_req_uuid')
     request_accepted = request.get_json().get('request_accepted')
     appt_req = db.session.query(APPOINTMENT_REQUEST).filter(APPOINTMENT_REQUEST.uuid == appt_req_uuid).first()
     appt_req.request_accepted = request_accepted
-
+    # TODO: ADD OVERRIDE OF CUSTOMER DESIRED TARGET TTME FROM THIS POST REQUEST!
     if request_accepted:
         # Create an APPOINTMENT
         appointment = APPOINTMENT(customer_uuid=appt_req.customer_uuid, appointment_time=appt_req.target_time, service_requested=appt_req.service_requested, admin_uuid=session['user_uuid'], request_uuid=appt_req_uuid)
@@ -103,27 +105,26 @@ def get_appointment():
 
     return jsonify({"message":"todo"})
 
-@app.route("/api/appointment", methods=['DELETE'])
-@login_required()
-def cancel_appointment():
-
-    return jsonify({"message":"todo"})
-
 # ADMIN ROUTES
 @app.route("/api/admin/appointment", methods=['GET'])
 @login_required(admin_endpoint=True)
 def admin_get_appointment():
-
-    return jsonify({"message":"todo"})
-
-@app.route("/api/admin/appointment", methods=['DELETE'])
-@login_required(admin_endpoint=True)
-def admin_delete_appointment():
-
-    return jsonify({"message":"todo"})
+    appointments = db.session.query(APPOINTMENT, ACCOUNT).join(ACCOUNT, APPOINTMENT.customer_uuid == ACCOUNT.uuid).filter(APPOINTMENT.appointment_completed == None).all()
+    appointment_data = []
+    for appointment, account in appointments:
+        appointment_data.append({
+            "appointment_uuid": appointment.uuid,
+            "request_uuid": appointment.request_uuid,
+            "customer_uuid": appointment.customer_uuid,
+            "admin_uuid": appointment.admin_uuid,
+            "appointment_time": appointment.appointment_time,
+            "service_requested": appointment.service_requested,
+            "email": account.email
+        })
+    return jsonify(appointment_data)
 
 @app.route("/api/admin/appointment", methods=['POST'])
 @login_required(admin_endpoint=True)
 def admin_resolve_appointment():
-
+    # set the fields appointment_completed and appointment_note based on POSTed appointment_uuid (and other fields) in JSON
     return jsonify({"message":"todo"})
