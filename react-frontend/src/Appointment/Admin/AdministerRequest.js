@@ -18,6 +18,7 @@ const AdministerRequest = (props) => {
                 // Handle the error
                 console.error('API error:', error);
             });
+        window.location.reload(); // Trigger page refresh
     };
 
     const handleReject = (requestUuid) => {
@@ -32,6 +33,7 @@ const AdministerRequest = (props) => {
                 // Handle the error
                 console.error('API error:', error);
             });
+        window.location.reload(); // Trigger page refresh
     };
 
     return (

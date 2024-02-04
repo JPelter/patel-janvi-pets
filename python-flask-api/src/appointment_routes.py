@@ -102,8 +102,18 @@ def admin_resolve_request():
 @app.route("/api/appointment", methods=['GET'])
 @login_required()
 def get_appointment():
-
-    return jsonify({"message":"todo"})
+    appointments = db.session.query(APPOINTMENT).filter(APPOINTMENT.customer_uuid == session['user_uuid'], APPOINTMENT.appointment_completed == None).all()
+    appointment_data = []
+    for appointment in appointments:
+        appointment_data.append({
+            "appointment_uuid": appointment.uuid,
+            "request_uuid": appointment.request_uuid,
+            "customer_uuid": appointment.customer_uuid,
+            "admin_uuid": appointment.admin_uuid,
+            "appointment_time": appointment.appointment_time,
+            "service_requested": appointment.service_requested
+        })
+    return jsonify(appointment_data)
 
 # ADMIN ROUTES
 @app.route("/api/admin/appointment", methods=['GET'])

@@ -20,42 +20,21 @@ const services = ['Checkup', 'Short walk', 'Long walk', 'Vet travel', 'Bath'];
 
 const AppointmentRequest = (props) => {
     console.log('AppointmentRequest props:', props);
-    const [targetTime, setTargetTime] = useState('');
-    const [selectedService, setSelectedService] = useState('');
+    // set defaults from existing request prop
+    const [targetTime, setTargetTime] = useState(props.existingRequest.target_time);
+    const [selectedService, setSelectedService] = useState(props.existingRequest.service_requested);
+    const [requestUuid, setRequestUuid] = useState(props.existingRequest.request_uuid);
+    const [recurringWeekly, setRecurringWeekly] = useState(props.existingRequest.recurring_weekly);
+    const [recurringEndDate, setRecurringEndDate] = useState(props.existingRequest.recurring_end_date);
     const [loading, setLoading] = useState(true);
     const [submitted, setSubmitted] = useState(false);
-    const [requestUuid, setRequestUuid] = useState('');
-    const [recurringWeekly, setRecurringWeekly] = useState(false);
-    const [recurringEndDate, setRecurringEndDate] = useState('');
-
-    const getExistingRequest = () => {
-        axios
-            .get(`${process.env.REACT_APP_API_REQUEST_APPOINTMENT}`)
-            .then((response) => {
-                if (response.status === 200) {
-                    console.log('Existing request response:', response.data);
-                    setSubmitted(true);
-                    const { target_time, service_requested, request_uuid, recurring_weekly, recurring_enddate } = response.data;
-                    setSelectedService(service_requested);
-                    setRequestUuid(request_uuid);
-                    setRecurringWeekly(recurring_weekly);
-                    setRecurringEndDate(recurring_enddate);
-                    setTargetTime(target_time);
-                    // Convert the timestamp to a Date object
-                    const dateObject = new Date(target_time);
-                    const localDateTimeString = dateObject.toLocaleString();
-                    setTargetTime(localDateTimeString);
-                }
-            })
-            .catch((error) => {
-                console.error('Error making GET request:', error);
-            });
-        setLoading(false);
-    };
 
     useEffect(() => {
-        getExistingRequest();
-    }, []);
+        if (props.existingRequest.request_uuid) {
+            setSubmitted(true);
+        }
+        setLoading(false);
+    }, [props.existingRequest.request_uuid]);
 
     const handleTargetTimeChange = (value) => {
         setTargetTime(value);
