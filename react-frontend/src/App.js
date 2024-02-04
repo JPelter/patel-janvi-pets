@@ -26,7 +26,7 @@ function App() {
         console.log('Admin confirmed:', adminResponse.data);
 
       } catch (error) {
-          console.error('Error checking auth:', error);
+          console.error('Error checking auth or admin:', error);
       } finally {
         setCheckedAuth(true);
       }

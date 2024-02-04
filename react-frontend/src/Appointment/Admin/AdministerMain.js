@@ -55,7 +55,7 @@ const AdministerMain = (props) => {
                 <Typography>Administer Requests</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <AdministerRequest {...props}/>
+                    <AdministerRequest adminRequests={adminRequests}/>
                 </AccordionDetails>
             </Accordion>
             <Accordion elevation={3} style={{ maxWidth: '100%', marginLeft: '20px', marginRight: '20px', borderBottomLeftRadius: '4px', borderBottomRightRadius: '4px' }} disabled={isSecondAccordionDisabled}>
@@ -67,7 +67,7 @@ const AdministerMain = (props) => {
                 <Typography>Administer Appointments</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                    <AdministerAppointment {...props}/>
+                    <AdministerAppointment adminAppointments={adminAppointments}/>
                 </AccordionDetails>
             </Accordion>
         </div>
